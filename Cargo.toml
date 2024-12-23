@@ -1,0 +1,19 @@
+[package]
+name = "congress-gov-bindings"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+bytes = "1.9.0"
+chrono = { version = "0.4.39", features = ["serde"] }
+derive_builder = "0.20.2"
+http = "1.2.0"
+reqwest = "0.12.9"
+serde = { version = "1.0.216", features = ["derive"] }
+serde_json = "1.0.134"
+thiserror = "2.0.9"
+url = "2.5.4"
+
+[dev-dependencies]
+dotenvy = "0.15.7"
