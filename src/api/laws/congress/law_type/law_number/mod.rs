@@ -7,13 +7,17 @@ use crate::{
     params::QueryParams,
 };
 
-mod law_type;
+use super::LawType;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Congress {
+pub struct CongressByLawTypeByLawNumber {
     #[builder(setter(into))]
     congress: u16,
+    #[builder(default)]
+    law_type: LawType,
+    #[builder(default)]
+    law_number: u32,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -22,19 +26,25 @@ pub struct Congress {
     limit: Option<u8>,
 }
 
-impl Congress {
-    pub fn builder() -> CongressBuilder {
-        CongressBuilder::default()
+impl CongressByLawTypeByLawNumber {
+    pub fn builder() -> CongressByLawTypeByLawNumberBuilder {
+        CongressByLawTypeByLawNumberBuilder::default()
     }
 }
 
-impl Endpoint for Congress {
+impl Endpoint for CongressByLawTypeByLawNumber {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("law/{}", self.congress).into()
+        format!(
+            "law/{}/{}/{}",
+            self.congress,
+            self.law_type.as_str(),
+            self.law_number
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -50,11 +60,21 @@ impl Endpoint for Congress {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::laws::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{
+        api::laws::congress::law_type::law_number::CongressByLawTypeByLawNumber, auth::Auth,
+        cdg::Cdg, query::Query,
+    };
+
+    use super::LawType;
 
     #[test]
     fn is_sufficient() {
-        Congress::builder().congress(118_u16).build().unwrap();
+        CongressByLawTypeByLawNumber::builder()
+            .congress(118_u16)
+            .law_type(super::LawType::Public)
+            .law_number(108)
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -64,9 +84,13 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Congress::builder().congress(118_u16).build().unwrap();
+        let endpoint = CongressByLawTypeByLawNumber::builder()
+            .congress(118_u16)
+            .law_type(LawType::Public)
+            .law_number(108)
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
 }
-
