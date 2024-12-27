@@ -3,7 +3,7 @@ use http::Response;
 use std::error::Error;
 use url::Url;
 
-use crate::api::ApiError;
+use crate::api::error::ApiError;
 
 pub trait Client {
     type Error: Error + Send + Sync + 'static;

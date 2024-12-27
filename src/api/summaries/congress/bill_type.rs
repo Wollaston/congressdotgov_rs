@@ -1,50 +1,46 @@
+use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{
-    endpoint::{Endpoint, Format},
-    params::QueryParams,
-};
+use crate::{endpoint::Endpoint, params::QueryParams};
 
-use super::LawType;
+use super::{Format, Sort};
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct CongressByLawTypeByLawNumber {
+pub struct BillType {
     #[builder(setter(into))]
     congress: u16,
-    #[builder(default)]
-    law_type: LawType,
-    #[builder(default)]
-    law_number: u32,
+    #[builder(setter(into))]
+    bill_type: crate::api::BillType,
     #[builder(default)]
     format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
     limit: Option<u8>,
+    #[builder(default)]
+    from_date_time: Option<DateTime<Utc>>,
+    #[builder(default)]
+    to_date_time: Option<DateTime<Utc>>,
+    #[builder(default)]
+    sort: Option<Sort>,
 }
 
-impl CongressByLawTypeByLawNumber {
-    pub fn builder() -> CongressByLawTypeByLawNumberBuilder {
-        CongressByLawTypeByLawNumberBuilder::default()
+impl BillType {
+    pub fn builder() -> BillTypeBuilder {
+        BillTypeBuilder::default()
     }
 }
 
-impl Endpoint for CongressByLawTypeByLawNumber {
+impl Endpoint for BillType {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!(
-            "law/{}/{}/{}",
-            self.congress,
-            self.law_type.as_str(),
-            self.law_number
-        )
-        .into()
+        format!("summaries/{}/{}", self.congress, self.bill_type.as_str()).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -53,6 +49,9 @@ impl Endpoint for CongressByLawTypeByLawNumber {
         params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
+        params.push_opt("from_date_time", self.from_date_time);
+        params.push_opt("to_date_time", self.to_date_time);
+        params.push_opt("sort", self.sort);
 
         params
     }
@@ -61,18 +60,14 @@ impl Endpoint for CongressByLawTypeByLawNumber {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::laws::congress::law_type::law_number::CongressByLawTypeByLawNumber, auth::Auth,
-        cdg::Cdg, query::Query,
+        api::summaries::congress::bill_type::BillType, auth::Auth, cdg::Cdg, query::Query,
     };
-
-    use super::LawType;
 
     #[test]
     fn is_sufficient() {
-        CongressByLawTypeByLawNumber::builder()
+        BillType::builder()
             .congress(118_u16)
-            .law_type(super::LawType::Public)
-            .law_number(108)
+            .bill_type(crate::api::BillType::Hr)
             .build()
             .unwrap();
     }
@@ -84,10 +79,9 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = CongressByLawTypeByLawNumber::builder()
+        let endpoint = BillType::builder()
             .congress(118_u16)
-            .law_type(LawType::Public)
-            .law_number(108)
+            .bill_type(crate::api::BillType::Hr)
             .build()
             .unwrap();
 

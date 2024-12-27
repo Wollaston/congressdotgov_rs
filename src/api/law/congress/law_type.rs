@@ -3,32 +3,11 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    endpoint::{Endpoint, Format},
-    params::QueryParams,
+    api::{Format, LawType},
+    endpoint::Endpoint, params::QueryParams,
 };
 
 mod law_number;
-
-#[derive(Debug, Clone, Copy)]
-pub enum LawType {
-    Public,
-    Private,
-}
-
-impl LawType {
-    fn as_str(self) -> &'static str {
-        match self {
-            LawType::Public => "pub",
-            LawType::Private => "priv",
-        }
-    }
-}
-
-impl Default for LawType {
-    fn default() -> Self {
-        Self::Public
-    }
-}
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
@@ -74,7 +53,7 @@ impl Endpoint for CongressByLawType {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::laws::congress::law_type::CongressByLawType, auth::Auth, cdg::Cdg, query::Query,
+        api::law::congress::law_type::CongressByLawType, auth::Auth, cdg::Cdg, query::Query,
     };
 
     use super::LawType;

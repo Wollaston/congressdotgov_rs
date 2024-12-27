@@ -2,16 +2,13 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{
-    endpoint::{Endpoint, Format},
-    params::QueryParams,
-};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 mod law_type;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Congress {
+pub struct Summaries {
     #[builder(setter(into))]
     congress: u16,
     #[builder(default)]
@@ -22,13 +19,13 @@ pub struct Congress {
     limit: Option<u8>,
 }
 
-impl Congress {
-    pub fn builder() -> CongressBuilder {
-        CongressBuilder::default()
+impl Summaries {
+    pub fn builder() -> SummariesBuilder {
+        SummariesBuilder::default()
     }
 }
 
-impl Endpoint for Congress {
+impl Endpoint for Summaries {
     fn method(&self) -> Method {
         Method::GET
     }
@@ -50,11 +47,11 @@ impl Endpoint for Congress {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::laws::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::law::congress::Summaries, auth::Auth, cdg::Cdg, query::Query};
 
     #[test]
     fn is_sufficient() {
-        Congress::builder().congress(118_u16).build().unwrap();
+        Summaries::builder().congress(118_u16).build().unwrap();
     }
 
     #[tokio::test]
@@ -64,9 +61,8 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Congress::builder().congress(118_u16).build().unwrap();
+        let endpoint = Summaries::builder().congress(118_u16).build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
 }
-

@@ -1,7 +1,4 @@
-use crate::{
-    api::{self, ApiError},
-    auth::Auth,
-};
+use crate::{api::error::ApiError, auth::Auth};
 use bytes::Bytes;
 use http::{HeaderValue, Response};
 use reqwest::{Client, Request};
@@ -59,7 +56,7 @@ impl Cdg {
 impl crate::client::Client for Cdg {
     type Error = CdgError;
 
-    fn rest_endpoint(&self, endpoint: &str) -> Result<Url, api::ApiError<Self::Error>> {
+    fn rest_endpoint(&self, endpoint: &str) -> Result<Url, ApiError<Self::Error>> {
         Ok(self.base_url.join(endpoint)?)
     }
 
@@ -96,6 +93,6 @@ impl crate::client::Client for Cdg {
         };
         call()
             .await
-            .map_err(|e| api::ApiError::<Self::Error>::Client { source: e })
+            .map_err(|e| ApiError::<Self::Error>::Client { source: e })
     }
 }

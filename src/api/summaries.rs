@@ -1,16 +1,17 @@
-use std::borrow::Cow;
-
-use crate::{
-    endpoint::{Endpoint, Format, Sort},
-    params::QueryParams,
-};
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
+use std::borrow::Cow;
+
+use crate::{endpoint::Endpoint, params::QueryParams};
+
+use super::{Format, Sort};
+
+mod congress;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Bill {
+pub struct Summaries {
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -25,19 +26,19 @@ pub struct Bill {
     sort: Option<Sort>,
 }
 
-impl Bill {
-    pub fn builder() -> BillBuilder {
-        BillBuilder::default()
+impl Summaries {
+    pub fn builder() -> SummariesBuilder {
+        SummariesBuilder::default()
     }
 }
 
-impl Endpoint for Bill {
+impl Endpoint for Summaries {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "bill".into()
+        "summaries".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -56,11 +57,11 @@ impl Endpoint for Bill {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::bills::bill::Bill, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::summaries::Summaries, auth::Auth, cdg::Cdg, query::Query};
 
     #[test]
-    fn bll_is_sufficient() {
-        Bill::builder().build().unwrap();
+    fn is_sufficient() {
+        Summaries::builder().build().unwrap();
     }
 
     #[tokio::test]
@@ -70,7 +71,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Bill::builder().build().unwrap();
+        let endpoint = Summaries::builder().build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

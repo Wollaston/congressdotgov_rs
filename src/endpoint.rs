@@ -1,12 +1,12 @@
 use crate::{
-    api::ApiError,
+    api::error::ApiError,
     client::Client,
     params::QueryParams,
     query::{self, Query},
 };
 use http::{Method, Request};
 use serde::de::DeserializeOwned;
-use std::{borrow::Cow, fmt::Display};
+use std::borrow::Cow;
 use url::Url;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -21,54 +21,6 @@ impl UrlBase {
     {
         match self {
             UrlBase::ApiV3 => client.rest_endpoint(endpoint),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Format {
-    Json,
-    Xml,
-}
-
-impl Default for Format {
-    fn default() -> Self {
-        Self::Json
-    }
-}
-
-impl From<Format> for Cow<'static, str> {
-    fn from(format: Format) -> Self {
-        format.into()
-    }
-}
-
-impl Display for Format {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Json => write!(f, "json"),
-            Self::Xml => write!(f, "xml"),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Sort {
-    Asc,
-    Desc,
-}
-
-impl Default for Sort {
-    fn default() -> Self {
-        Self::Asc
-    }
-}
-
-impl Display for Sort {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Asc => write!(f, "asc"),
-            Self::Desc => write!(f, "desc"),
         }
     }
 }

@@ -1,4 +1,4 @@
-use crate::{api::ApiError, cdg::CdgError, client::Client};
+use crate::{api::error::ApiError, cdg::CdgError, client::Client};
 use http::Uri;
 use url::Url;
 
