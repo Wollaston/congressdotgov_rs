@@ -2,10 +2,46 @@ use std::{borrow::Cow, fmt::Display};
 
 pub mod amendments;
 pub mod bill;
+pub mod committee;
+pub mod committee_report;
 pub mod error;
 pub mod law;
 pub mod member;
 pub mod summaries;
+
+#[derive(Debug, Clone, Copy)]
+pub enum Chamber {
+    House,
+    Senate,
+    Joint,
+}
+
+impl Chamber {
+    fn as_str(self) -> &'static str {
+        match self {
+            Chamber::House => "house",
+            Chamber::Senate => "senate",
+            Chamber::Joint => "joint",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum ReportType {
+    Hrpt,
+    Srpt,
+    Erpt,
+}
+
+impl ReportType {
+    fn as_str(self) -> &'static str {
+        match self {
+            ReportType::Hrpt => "hrpt",
+            ReportType::Srpt => "srpt",
+            ReportType::Erpt => "erpt",
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy)]
 pub enum LawType {

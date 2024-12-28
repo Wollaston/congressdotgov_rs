@@ -85,7 +85,6 @@ mod tests {
             .build()
             .unwrap();
 
-        let res: serde_json::Value = endpoint.query(&client).await.unwrap();
-        dbg!(res);
+        let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
 }
