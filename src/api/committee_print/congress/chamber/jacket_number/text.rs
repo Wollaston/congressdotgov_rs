@@ -2,9 +2,9 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
 
-use super::{CommitteePrintChamber, Format};
+use super::Format;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
@@ -12,7 +12,7 @@ pub struct Text {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
-    chamber: CommitteePrintChamber,
+    chamber: CommitteeChamber,
     #[builder(setter(into))]
     jacket_number: u32,
     #[builder(default)]
@@ -58,9 +58,7 @@ impl Endpoint for Text {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::committee_print::congress::chamber::{
-            jacket_number::text::Text, CommitteePrintChamber,
-        },
+        api::{committee_print::congress::chamber::jacket_number::text::Text, CommitteeChamber},
         auth::Auth,
         cdg::Cdg,
         query::Query,
@@ -70,7 +68,7 @@ mod tests {
     fn is_sufficient() {
         Text::builder()
             .congress(117_u16)
-            .chamber(CommitteePrintChamber::House)
+            .chamber(CommitteeChamber::House)
             .jacket_number(48144_u32)
             .build()
             .unwrap();
@@ -85,7 +83,7 @@ mod tests {
 
         let endpoint = Text::builder()
             .congress(117_u16)
-            .chamber(CommitteePrintChamber::House)
+            .chamber(CommitteeChamber::House)
             .jacket_number(48144_u32)
             .build()
             .unwrap();

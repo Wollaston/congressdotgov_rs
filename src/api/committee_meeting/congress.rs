@@ -6,11 +6,13 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod congress;
+mod chamber;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct CommitteeMeeting {
+pub struct Congress {
+    #[builder(setter(into))]
+    congress: u16,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -19,19 +21,19 @@ pub struct CommitteeMeeting {
     limit: Option<u8>,
 }
 
-impl CommitteeMeeting {
-    pub fn builder() -> CommitteeMeetingBuilder {
-        CommitteeMeetingBuilder::default()
+impl Congress {
+    pub fn builder() -> CongressBuilder {
+        CongressBuilder::default()
     }
 }
 
-impl Endpoint for CommitteeMeeting {
+impl Endpoint for Congress {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "committee-meeting".to_string().into()
+        format!("committee-meeting/{}", self.congress).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -47,11 +49,11 @@ impl Endpoint for CommitteeMeeting {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::committee_meeting::CommitteeMeeting, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::committee_meeting::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
 
     #[test]
     fn is_sufficient() {
-        CommitteeMeeting::builder().build().unwrap();
+        Congress::builder().congress(118_u16).build().unwrap();
     }
 
     #[tokio::test]
@@ -61,7 +63,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = CommitteeMeeting::builder().build().unwrap();
+        let endpoint = Congress::builder().congress(118_u16).build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

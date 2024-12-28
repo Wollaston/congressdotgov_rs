@@ -3,12 +3,30 @@ use std::{borrow::Cow, fmt::Display};
 pub mod amendments;
 pub mod bill;
 pub mod committee;
+pub mod committee_meeting;
 pub mod committee_print;
 pub mod committee_report;
 pub mod error;
 pub mod law;
 pub mod member;
 pub mod summaries;
+
+#[derive(Debug, Clone, Copy)]
+pub enum CommitteeChamber {
+    House,
+    Senate,
+    NoChamber,
+}
+
+impl CommitteeChamber {
+    fn as_str(self) -> &'static str {
+        match self {
+            CommitteeChamber::House => "house",
+            CommitteeChamber::Senate => "senate",
+            CommitteeChamber::NoChamber => "nochamber",
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy)]
 pub enum Chamber {
