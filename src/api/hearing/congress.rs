@@ -6,11 +6,13 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod congress;
+mod chamber;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Hearing {
+pub struct Congress {
+    #[builder(setter(into))]
+    congress: u16,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -19,19 +21,19 @@ pub struct Hearing {
     limit: Option<u8>,
 }
 
-impl Hearing {
-    pub fn builder() -> HearingBuilder {
-        HearingBuilder::default()
+impl Congress {
+    pub fn builder() -> CongressBuilder {
+        CongressBuilder::default()
     }
 }
 
-impl Endpoint for Hearing {
+impl Endpoint for Congress {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "hearing".to_string().into()
+        format!("hearing/{}", self.congress).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -47,11 +49,11 @@ impl Endpoint for Hearing {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::hearing::Hearing, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::hearing::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
 
     #[test]
     fn is_sufficient() {
-        Hearing::builder().build().unwrap();
+        Congress::builder().congress(116_u16).build().unwrap();
     }
 
     #[tokio::test]
@@ -61,7 +63,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Hearing::builder().build().unwrap();
+        let endpoint = Congress::builder().congress(116_u16).build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

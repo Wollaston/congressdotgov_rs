@@ -7,6 +7,7 @@ pub mod committee_meeting;
 pub mod committee_print;
 pub mod committee_report;
 pub mod error;
+pub mod hearing;
 pub mod law;
 pub mod member;
 pub mod summaries;

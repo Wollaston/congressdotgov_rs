@@ -2,15 +2,19 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod congress;
+mod jacket_number;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Hearing {
+pub struct Chamber {
+    #[builder(setter(into))]
+    congress: u16,
+    #[builder(setter(into))]
+    chamber: CommitteeChamber,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -19,19 +23,19 @@ pub struct Hearing {
     limit: Option<u8>,
 }
 
-impl Hearing {
-    pub fn builder() -> HearingBuilder {
-        HearingBuilder::default()
+impl Chamber {
+    pub fn builder() -> ChamberBuilder {
+        ChamberBuilder::default()
     }
 }
 
-impl Endpoint for Hearing {
+impl Endpoint for Chamber {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "hearing".to_string().into()
+        format!("hearing/{}/{}", self.congress, self.chamber.as_str()).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -47,11 +51,20 @@ impl Endpoint for Hearing {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::hearing::Hearing, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{
+        api::{hearing::congress::chamber::Chamber, CommitteeChamber},
+        auth::Auth,
+        cdg::Cdg,
+        query::Query,
+    };
 
     #[test]
     fn is_sufficient() {
-        Hearing::builder().build().unwrap();
+        Chamber::builder()
+            .congress(116_u16)
+            .chamber(CommitteeChamber::House)
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -61,7 +74,11 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Hearing::builder().build().unwrap();
+        let endpoint = Chamber::builder()
+            .congress(116_u16)
+            .chamber(CommitteeChamber::House)
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
