@@ -6,11 +6,15 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod year;
-
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct BoundCongressionalRecord {
+pub struct Day {
+    #[builder(setter(into))]
+    year: u16,
+    #[builder(setter(into))]
+    month: u8,
+    #[builder(setter(into))]
+    day: u8,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -19,19 +23,23 @@ pub struct BoundCongressionalRecord {
     limit: Option<u8>,
 }
 
-impl BoundCongressionalRecord {
-    pub fn builder() -> BoundCongressionalRecordBuilder {
-        BoundCongressionalRecordBuilder::default()
+impl Day {
+    pub fn builder() -> DayBuilder {
+        DayBuilder::default()
     }
 }
 
-impl Endpoint for BoundCongressionalRecord {
+impl Endpoint for Day {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "bound-congressional-record".to_string().into()
+        format!(
+            "bound-congressional-record/{}/{}/{}",
+            self.year, self.month, self.day
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -48,13 +56,17 @@ impl Endpoint for BoundCongressionalRecord {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::bound_congressional_record::BoundCongressionalRecord, auth::Auth, cdg::Cdg,
-        query::Query,
+        api::bound_congressional_record::year::month::day::Day, auth::Auth, cdg::Cdg, query::Query,
     };
 
     #[test]
     fn is_sufficient() {
-        BoundCongressionalRecord::builder().build().unwrap();
+        Day::builder()
+            .year(2020_u16)
+            .month(4_u8)
+            .day(6_u8)
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -64,7 +76,12 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = BoundCongressionalRecord::builder().build().unwrap();
+        let endpoint = Day::builder()
+            .year(2020_u16)
+            .month(4_u8)
+            .day(6_u8)
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

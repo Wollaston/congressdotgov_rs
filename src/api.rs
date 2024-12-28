@@ -2,6 +2,7 @@ use std::{borrow::Cow, fmt::Display};
 
 pub mod amendments;
 pub mod bill;
+pub mod bound_congressional_record;
 pub mod committee;
 pub mod committee_meeting;
 pub mod committee_print;
