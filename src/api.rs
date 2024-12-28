@@ -11,6 +11,7 @@ pub mod congressional_record;
 pub mod daily_congressional_record;
 pub mod error;
 pub mod hearing;
+pub mod house_communication;
 pub mod law;
 pub mod member;
 pub mod summaries;

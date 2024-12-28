@@ -6,11 +6,13 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod congress;
+mod communication_type;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct HouseCommunication {
+pub struct Congress {
+    #[builder(setter(into))]
+    congress: u16,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -19,19 +21,19 @@ pub struct HouseCommunication {
     limit: Option<u8>,
 }
 
-impl HouseCommunication {
-    pub fn builder() -> HouseCommunicationBuilder {
-        HouseCommunicationBuilder::default()
+impl Congress {
+    pub fn builder() -> CongressBuilder {
+        CongressBuilder::default()
     }
 }
 
-impl Endpoint for HouseCommunication {
+impl Endpoint for Congress {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "house-communication".to_string().into()
+        format!("house-communication/{}", self.congress).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -47,11 +49,11 @@ impl Endpoint for HouseCommunication {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::house_communication::HouseCommunication, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::house_communication::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
 
     #[test]
     fn is_sufficient() {
-        HouseCommunication::builder().build().unwrap();
+        Congress::builder().congress(116_u16).build().unwrap();
     }
 
     #[tokio::test]
@@ -61,7 +63,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = HouseCommunication::builder().build().unwrap();
+        let endpoint = Congress::builder().congress(116_u16).build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
