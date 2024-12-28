@@ -58,6 +58,12 @@ impl ParamValue<'static> for u8 {
     }
 }
 
+impl ParamValue<'static> for u16 {
+    fn as_value(&self) -> Cow<'static, str> {
+        self.to_string().into()
+    }
+}
+
 impl ParamValue<'static> for u32 {
     fn as_value(&self) -> Cow<'static, str> {
         self.to_string().into()
