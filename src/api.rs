@@ -7,6 +7,7 @@ pub mod committee_meeting;
 pub mod committee_print;
 pub mod committee_report;
 pub mod congressional_record;
+pub mod daily_congressional_record;
 pub mod error;
 pub mod hearing;
 pub mod law;
