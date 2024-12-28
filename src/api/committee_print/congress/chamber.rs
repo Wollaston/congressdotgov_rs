@@ -7,11 +7,15 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod congress;
+mod jacket_number;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct CommitteePrint {
+pub struct Chamber {
+    #[builder(setter(into))]
+    congress: u16,
+    #[builder(setter(into))]
+    chamber: CommitteePrintChamber,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -24,19 +28,24 @@ pub struct CommitteePrint {
     to_date_time: Option<DateTime<Utc>>,
 }
 
-impl CommitteePrint {
-    pub fn builder() -> CommitteePrintBuilder {
-        CommitteePrintBuilder::default()
+impl Chamber {
+    pub fn builder() -> ChamberBuilder {
+        ChamberBuilder::default()
     }
 }
 
-impl Endpoint for CommitteePrint {
+impl Endpoint for Chamber {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "committee-print".to_string().into()
+        format!(
+            "committee-print/{}/{}",
+            self.congress,
+            self.chamber.as_str()
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -52,13 +61,38 @@ impl Endpoint for CommitteePrint {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum CommitteePrintChamber {
+    House,
+    Senate,
+    NoChamber,
+}
+
+impl CommitteePrintChamber {
+    fn as_str(self) -> &'static str {
+        match self {
+            CommitteePrintChamber::House => "house",
+            CommitteePrintChamber::Senate => "senate",
+            CommitteePrintChamber::NoChamber => "nochamber",
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{api::committee_print::CommitteePrint, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{
+        api::committee_print::congress::chamber::Chamber, auth::Auth, cdg::Cdg, query::Query,
+    };
+
+    use super::CommitteePrintChamber;
 
     #[test]
     fn is_sufficient() {
-        CommitteePrint::builder().build().unwrap();
+        Chamber::builder()
+            .congress(117_u16)
+            .chamber(CommitteePrintChamber::House)
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -68,7 +102,11 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = CommitteePrint::builder().build().unwrap();
+        let endpoint = Chamber::builder()
+            .congress(116_u16)
+            .chamber(CommitteePrintChamber::House)
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

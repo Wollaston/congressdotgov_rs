@@ -3,6 +3,7 @@ use std::{borrow::Cow, fmt::Display};
 pub mod amendments;
 pub mod bill;
 pub mod committee;
+pub mod committee_print;
 pub mod committee_report;
 pub mod error;
 pub mod law;
