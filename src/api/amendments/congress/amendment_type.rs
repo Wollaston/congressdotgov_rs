@@ -7,13 +7,15 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod amendment_type;
+mod amendment_number;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Congress {
+pub struct AmendmentType {
     #[builder(setter(into))]
     congress: u8,
+    #[builder(setter(into))]
+    amendment_type: CongressionalAmendmentType,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -26,19 +28,24 @@ pub struct Congress {
     to_date_time: Option<DateTime<Utc>>,
 }
 
-impl Congress {
-    pub fn builder() -> CongressBuilder {
-        CongressBuilder::default()
+impl AmendmentType {
+    pub fn builder() -> AmendmentTypeBuilder {
+        AmendmentTypeBuilder::default()
     }
 }
 
-impl Endpoint for Congress {
+impl Endpoint for AmendmentType {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("amendment/{}", self.congress).into()
+        format!(
+            "amendment/{}/{}",
+            self.congress,
+            self.amendment_type.as_str()
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -54,13 +61,39 @@ impl Endpoint for Congress {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CongressionalAmendmentType {
+    Hamdt,
+    Samdt,
+    Suamdt,
+}
+
+impl CongressionalAmendmentType {
+    fn as_str(self) -> &'static str {
+        match self {
+            CongressionalAmendmentType::Hamdt => "hamdt",
+            CongressionalAmendmentType::Samdt => "samdt",
+            CongressionalAmendmentType::Suamdt => "suamdt",
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{api::amendments::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{
+        api::amendments::congress::amendment_type::AmendmentType, auth::Auth, cdg::Cdg,
+        query::Query,
+    };
+
+    use super::CongressionalAmendmentType;
 
     #[test]
     fn is_sufficient() {
-        Congress::builder().congress(117_u8).build().unwrap();
+        AmendmentType::builder()
+            .congress(117_u8)
+            .amendment_type(CongressionalAmendmentType::Suamdt)
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -70,7 +103,11 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Congress::builder().congress(117_u8).build().unwrap();
+        let endpoint = AmendmentType::builder()
+            .congress(117_u8)
+            .amendment_type(CongressionalAmendmentType::Suamdt)
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
