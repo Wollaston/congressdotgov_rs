@@ -15,6 +15,7 @@ pub mod house_communication;
 pub mod house_requirement;
 pub mod law;
 pub mod member;
+pub mod senate_communication;
 pub mod summaries;
 
 #[derive(Debug, Clone, Copy)]
