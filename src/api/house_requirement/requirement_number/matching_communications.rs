@@ -6,11 +6,11 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod requirement_number;
-
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct HouseRequirement {
+pub struct MatchingCommunications {
+    #[builder(setter(into))]
+    requirement_number: u32,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -19,19 +19,23 @@ pub struct HouseRequirement {
     limit: Option<u8>,
 }
 
-impl HouseRequirement {
-    pub fn builder() -> HouseRequirementBuilder {
-        HouseRequirementBuilder::default()
+impl MatchingCommunications {
+    pub fn builder() -> MatchingCommunicationsBuilder {
+        MatchingCommunicationsBuilder::default()
     }
 }
 
-impl Endpoint for HouseRequirement {
+impl Endpoint for MatchingCommunications {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "house-requirement".to_string().into()
+        format!(
+            "house-requirement/{}/matching-communications",
+            self.requirement_number
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -47,11 +51,17 @@ impl Endpoint for HouseRequirement {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::house_requirement::HouseRequirement, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{
+        api::house_requirement::requirement_number::matching_communications::MatchingCommunications,
+        auth::Auth, cdg::Cdg, query::Query,
+    };
 
     #[test]
     fn is_sufficient() {
-        HouseRequirement::builder().build().unwrap();
+        MatchingCommunications::builder()
+            .requirement_number(8070_u32)
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -61,7 +71,10 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = HouseRequirement::builder().build().unwrap();
+        let endpoint = MatchingCommunications::builder()
+            .requirement_number(8070_u32)
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
