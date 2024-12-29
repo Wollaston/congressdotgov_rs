@@ -31,7 +31,7 @@
 //! let bills: Vec<Bill> = endpoint.query(&client).unwrap();
 //! ```
 
-use std::{borrow::Cow, fmt::Display};
+use std::borrow::Cow;
 
 pub mod amendments;
 pub mod bill;
@@ -166,15 +166,15 @@ impl Default for Format {
 
 impl From<Format> for Cow<'static, str> {
     fn from(format: Format) -> Self {
-        format.to_string().into()
+        format.as_str().into()
     }
 }
 
-impl Display for Format {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Format {
+    pub fn as_str(self) -> &'static str {
         match self {
-            Self::Json => write!(f, "json"),
-            Self::Xml => write!(f, "xml"),
+            Format::Json => "json",
+            Format::Xml => "xml",
         }
     }
 }
@@ -191,11 +191,11 @@ impl Default for Sort {
     }
 }
 
-impl Display for Sort {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Sort {
+    pub fn as_str(self) -> &'static str {
         match self {
-            Self::Asc => write!(f, "asc"),
-            Self::Desc => write!(f, "desc"),
+            Sort::Asc => "asc",
+            Sort::Desc => "desc",
         }
     }
 }

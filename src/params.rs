@@ -97,13 +97,13 @@ impl ParamValue<'static> for NaiveDate {
 
 impl ParamValue<'static> for Format {
     fn as_value(&self) -> Cow<'static, str> {
-        self.to_string().into()
+        self.as_str().into()
     }
 }
 
 impl ParamValue<'static> for Sort {
     fn as_value(&self) -> Cow<'static, str> {
-        self.to_string().into()
+        self.as_str().into()
     }
 }
 
