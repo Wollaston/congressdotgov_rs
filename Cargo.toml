@@ -1,5 +1,5 @@
 [package]
-name = "congress-gov-bindings"
+name = "congressdotgov-rs"
 version = "0.1.0"
 edition = "2021"
 
