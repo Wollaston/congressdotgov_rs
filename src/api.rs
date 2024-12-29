@@ -10,9 +10,9 @@
 //!
 //! ```rust,no_run
 //! use serde::Deserialize;
-//! use congressdotgov-rs::Cdg;
-//! use congressdotgov-rs::api::{self, Query};
-//! use congressdotgov-rs::api::bill::Congress;
+//! use congressdotgov_rs::Cdg;
+//! use congressdotgov_rs::api::{self, Query};
+//! use congressdotgov_rs::api::bill::Congress;
 //!
 //! // The return type of a `Bill`. Note that Cdg may contain more information, but you can
 //! // define your structure to only fetch what is needed.
