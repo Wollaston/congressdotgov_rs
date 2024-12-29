@@ -1,21 +1,19 @@
-use std::borrow::Cow;
-
-use crate::{
-    api::{Format, Sort},
-    endpoint::Endpoint,
-    params::QueryParams,
-};
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
+use std::borrow::Cow;
 
-mod bill_type;
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Congress {
+pub struct Subjects {
     #[builder(setter(into))]
     congress: u8,
+    #[builder(setter(into))]
+    bill_type: crate::api::BillType,
+    #[builder(setter(into))]
+    bill_number: u32,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -26,23 +24,27 @@ pub struct Congress {
     from_date_time: Option<DateTime<Utc>>,
     #[builder(default)]
     to_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    sort: Option<Sort>,
 }
 
-impl Congress {
-    pub fn builder() -> CongressBuilder {
-        CongressBuilder::default()
+impl Subjects {
+    pub fn builder() -> SubjectsBuilder {
+        SubjectsBuilder::default()
     }
 }
 
-impl Endpoint for Congress {
+impl Endpoint for Subjects {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("bill/{}", self.congress).into()
+        format!(
+            "bill/{}/{}/{}/subjects",
+            self.congress,
+            self.bill_type.as_str(),
+            self.bill_number
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -53,7 +55,6 @@ impl Endpoint for Congress {
         params.push_opt("limit", self.limit);
         params.push_opt("from_date_time", self.from_date_time);
         params.push_opt("to_date_time", self.to_date_time);
-        params.push_opt("sort", self.sort);
 
         params
     }
@@ -61,11 +62,19 @@ impl Endpoint for Congress {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::bill::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{
+        api::bill::congress::bill_type::bill_number::subjects::Subjects, auth::Auth, cdg::Cdg,
+        query::Query,
+    };
 
     #[test]
     fn bll_is_sufficient() {
-        Congress::builder().congress(117_u8).build().unwrap();
+        Subjects::builder()
+            .congress(117_u8)
+            .bill_type(crate::api::BillType::Hr)
+            .bill_number(3076_u32)
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -75,7 +84,12 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Congress::builder().congress(117_u8).build().unwrap();
+        let endpoint = Subjects::builder()
+            .congress(117_u8)
+            .bill_type(crate::api::BillType::Hr)
+            .bill_number(3076_u32)
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

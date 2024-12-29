@@ -9,13 +9,15 @@ use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
 
-mod bill_type;
+mod bill_number;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Congress {
+pub struct BillType {
     #[builder(setter(into))]
     congress: u8,
+    #[builder(setter(into))]
+    bill_type: crate::api::BillType,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -30,19 +32,19 @@ pub struct Congress {
     sort: Option<Sort>,
 }
 
-impl Congress {
-    pub fn builder() -> CongressBuilder {
-        CongressBuilder::default()
+impl BillType {
+    pub fn builder() -> BillTypeBuilder {
+        BillTypeBuilder::default()
     }
 }
 
-impl Endpoint for Congress {
+impl Endpoint for BillType {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("bill/{}", self.congress).into()
+        format!("bill/{}/{}", self.congress, self.bill_type.as_str()).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -61,11 +63,15 @@ impl Endpoint for Congress {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::bill::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::bill::congress::bill_type::BillType, auth::Auth, cdg::Cdg, query::Query};
 
     #[test]
     fn bll_is_sufficient() {
-        Congress::builder().congress(117_u8).build().unwrap();
+        BillType::builder()
+            .congress(117_u8)
+            .bill_type(crate::api::BillType::Hr)
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -75,7 +81,11 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Congress::builder().congress(117_u8).build().unwrap();
+        let endpoint = BillType::builder()
+            .congress(117_u8)
+            .bill_type(crate::api::BillType::Hr)
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
