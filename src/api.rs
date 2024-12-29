@@ -18,6 +18,7 @@ pub mod member;
 pub mod nomination;
 pub mod senate_communication;
 pub mod summaries;
+pub mod treaty;
 
 #[derive(Debug, Clone, Copy)]
 pub enum CommitteeChamber {

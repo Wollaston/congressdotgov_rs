@@ -1,4 +1,3 @@
-use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
@@ -7,36 +6,40 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod congress;
-
-#[derive(Debug, Clone, Copy, Builder)]
+#[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
-pub struct Treaty {
+pub struct Actions<'a> {
+    #[builder(setter(into))]
+    congress: u8,
+    #[builder(setter(into))]
+    treaty_number: u32,
+    #[builder(setter(into))]
+    treaty_suffix: Cow<'a, str>,
     #[builder(default)]
     format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
     limit: Option<u8>,
-    #[builder(default)]
-    from_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    to_date_time: Option<DateTime<Utc>>,
 }
 
-impl Treaty {
-    pub fn builder() -> TreatyBuilder {
-        TreatyBuilder::default()
+impl<'a> Actions<'a> {
+    pub fn builder() -> ActionsBuilder<'a> {
+        ActionsBuilder::default()
     }
 }
 
-impl Endpoint for Treaty {
+impl Endpoint for Actions<'_> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "treaty".to_string().into()
+        format!(
+            "treaty/{}/{}/{}/actions",
+            self.congress, self.treaty_number, self.treaty_suffix
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -45,8 +48,6 @@ impl Endpoint for Treaty {
         params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
-        params.push_opt("from_date_time", self.from_date_time);
-        params.push_opt("to_date_time", self.to_date_time);
 
         params
     }
@@ -54,11 +55,19 @@ impl Endpoint for Treaty {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::treaty::Treaty, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{
+        api::treaty::congress::treaty_number::treaty_suffix::actions::Actions, auth::Auth,
+        cdg::Cdg, query::Query,
+    };
 
     #[test]
     fn is_sufficient() {
-        Treaty::builder().build().unwrap();
+        Actions::builder()
+            .congress(114_u8)
+            .treaty_number(13_u32)
+            .treaty_suffix("A")
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -68,7 +77,12 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Treaty::builder().build().unwrap();
+        let endpoint = Actions::builder()
+            .congress(114_u8)
+            .treaty_number(13_u32)
+            .treaty_suffix("A")
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
