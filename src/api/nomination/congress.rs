@@ -7,11 +7,13 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod congress;
+mod nomination_number;
 
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Nomination {
+pub struct Congress {
+    #[builder(setter(into))]
+    congress: u8,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -24,19 +26,19 @@ pub struct Nomination {
     to_date_time: Option<DateTime<Utc>>,
 }
 
-impl Nomination {
-    pub fn builder() -> NominationBuilder {
-        NominationBuilder::default()
+impl Congress {
+    pub fn builder() -> CongressBuilder {
+        CongressBuilder::default()
     }
 }
 
-impl Endpoint for Nomination {
+impl Endpoint for Congress {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "nomination".to_string().into()
+        format!("nomination/{}", self.congress).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -54,11 +56,11 @@ impl Endpoint for Nomination {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::nomination::Nomination, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::nomination::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
 
     #[test]
     fn is_sufficient() {
-        Nomination::builder().build().unwrap();
+        Congress::builder().congress(117_u8).build().unwrap();
     }
 
     #[tokio::test]
@@ -68,7 +70,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Nomination::builder().build().unwrap();
+        let endpoint = Congress::builder().congress(117_u8).build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
