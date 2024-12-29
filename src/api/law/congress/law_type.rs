@@ -4,7 +4,8 @@ use std::borrow::Cow;
 
 use crate::{
     api::{Format, LawType},
-    endpoint::Endpoint, params::QueryParams,
+    endpoint::Endpoint,
+    params::QueryParams,
 };
 
 mod law_number;
