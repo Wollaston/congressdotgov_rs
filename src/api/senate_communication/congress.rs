@@ -8,6 +8,7 @@ use super::Format;
 
 mod communication_type;
 
+/// Represents the /senate-communication/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Congress {

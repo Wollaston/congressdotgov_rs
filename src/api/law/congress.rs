@@ -6,9 +6,10 @@ use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 mod law_type;
 
+/// Represents the /law/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Summaries {
+pub struct Congress {
     #[builder(setter(into))]
     congress: u16,
     #[builder(default)]
@@ -19,13 +20,13 @@ pub struct Summaries {
     limit: Option<u8>,
 }
 
-impl Summaries {
-    pub fn builder() -> SummariesBuilder {
-        SummariesBuilder::default()
+impl Congress {
+    pub fn builder() -> CongressBuilder {
+        CongressBuilder::default()
     }
 }
 
-impl Endpoint for Summaries {
+impl Endpoint for Congress {
     fn method(&self) -> Method {
         Method::GET
     }
@@ -45,13 +46,37 @@ impl Endpoint for Summaries {
     }
 }
 
+/// The possible law types in Congress. Also known as 'slip laws.'
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LawType {
+    /// Public laws affect society as a whole
+    Public,
+    /// Private laws affect an individual, family, or small group
+    Private,
+}
+
+impl LawType {
+    fn as_str(self) -> &'static str {
+        match self {
+            LawType::Public => "pub",
+            LawType::Private => "priv",
+        }
+    }
+}
+
+impl Default for LawType {
+    fn default() -> Self {
+        Self::Public
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{api::law::congress::Summaries, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::law::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
 
     #[test]
     fn is_sufficient() {
-        Summaries::builder().congress(118_u16).build().unwrap();
+        Congress::builder().congress(118_u16).build().unwrap();
     }
 
     #[tokio::test]
@@ -61,7 +86,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Summaries::builder().congress(118_u16).build().unwrap();
+        let endpoint = Congress::builder().congress(118_u16).build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

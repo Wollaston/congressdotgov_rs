@@ -1,3 +1,6 @@
+use chrono::{DateTime, Utc};
+use derive_builder::Builder;
+use http::Method;
 use std::borrow::Cow;
 
 use crate::{
@@ -5,12 +8,10 @@ use crate::{
     endpoint::Endpoint,
     params::QueryParams,
 };
-use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use http::Method;
 
 mod bill_type;
 
+/// Represents the /bill/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Congress {

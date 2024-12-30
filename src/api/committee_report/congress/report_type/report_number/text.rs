@@ -2,17 +2,21 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{
+    api::committee_report::congress::report_type::CommitteeReportType, endpoint::Endpoint,
+    params::QueryParams,
+};
 
 use super::Format;
 
+/// Represents the /committee-report/:congress/:reportType/:reportNumber/text endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Text {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
-    report_type: crate::api::ReportType,
+    report_type: CommitteeReportType,
     #[builder(setter(into))]
     report_number: u32,
     #[builder(default)]
@@ -58,15 +62,19 @@ impl Endpoint for Text {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::committee_report::congress::report_type::report_number::text::Text, auth::Auth,
-        cdg::Cdg, query::Query,
+        api::committee_report::congress::{
+            report_type::report_number::text::Text, report_type::CommitteeReportType,
+        },
+        auth::Auth,
+        cdg::Cdg,
+        query::Query,
     };
 
     #[test]
     fn is_sufficient() {
         Text::builder()
             .congress(118_u16)
-            .report_type(crate::api::ReportType::Hrpt)
+            .report_type(CommitteeReportType::Hrpt)
             .report_number(617_u32)
             .build()
             .unwrap();
@@ -81,7 +89,7 @@ mod tests {
 
         let endpoint = Text::builder()
             .congress(118_u16)
-            .report_type(crate::api::ReportType::Hrpt)
+            .report_type(CommitteeReportType::Hrpt)
             .report_number(617_u32)
             .build()
             .unwrap();

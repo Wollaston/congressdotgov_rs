@@ -8,6 +8,7 @@ use super::Format;
 
 mod matching_communications;
 
+/// Represents the /house-requirement/:requirementNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct RequirementNumber {

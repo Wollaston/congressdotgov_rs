@@ -9,6 +9,7 @@ use super::Format;
 
 mod report_type;
 
+/// Represents the /committee-report/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Congress {

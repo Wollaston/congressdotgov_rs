@@ -11,6 +11,7 @@ mod committees;
 mod hearings;
 mod ordinal;
 
+/// Represents the /nomination/:congress/:nominationNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct NominationNumber {

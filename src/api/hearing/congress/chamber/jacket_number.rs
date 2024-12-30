@@ -6,6 +6,7 @@ use crate::{api::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
+/// Represents the /hearing/:congress/:chamber/:jacketNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct JacketNumber {

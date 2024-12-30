@@ -8,6 +8,9 @@ use super::Format;
 
 mod state_code_district;
 
+/// Represents the /member/congress/:congress endpoint.
+///
+/// There is no /member/congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Congress {

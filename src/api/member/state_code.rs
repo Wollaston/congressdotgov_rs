@@ -8,6 +8,7 @@ use super::Format;
 
 mod district;
 
+/// Represents the /member/:stateCode endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct StateCode {

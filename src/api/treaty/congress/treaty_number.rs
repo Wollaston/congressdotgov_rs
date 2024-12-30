@@ -10,6 +10,7 @@ mod actions;
 mod committees;
 mod treaty_suffix;
 
+/// Represents the /treaty/:congress/:treatyNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct TreatyNumber {

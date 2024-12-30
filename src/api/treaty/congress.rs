@@ -9,6 +9,7 @@ use super::Format;
 
 mod treaty_number;
 
+/// Represents the /treaty/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Congress {

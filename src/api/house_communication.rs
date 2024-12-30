@@ -8,6 +8,7 @@ use super::Format;
 
 mod congress;
 
+/// Represents the /house-communication endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct HouseCommunication {

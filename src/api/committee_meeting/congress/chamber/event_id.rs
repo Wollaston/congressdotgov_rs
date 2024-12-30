@@ -6,6 +6,7 @@ use crate::{api::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
+/// Represents the /committee-meeting/:congress/:chamber/:eventId endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct EventId {

@@ -9,6 +9,7 @@ use super::Format;
 
 mod jacket_number;
 
+/// Represents the /committee-print/:congress/:chamber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Chamber {

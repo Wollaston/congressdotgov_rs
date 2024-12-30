@@ -8,6 +8,7 @@ use super::Format;
 
 mod communication_number;
 
+/// Represents the /house-communication/:congress/:communicationType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct CommunicationType {
@@ -54,11 +55,18 @@ impl Endpoint for CommunicationType {
     }
 }
 
+/// The possible communication types in the House of Representatives
+/// available via the congress.gov API. R – Requirements also exists,
+/// but it is not an option with the API.
 #[derive(Debug, Clone, Copy)]
-enum HouseCommunicationType {
+pub enum HouseCommunicationType {
+    /// Executive Communications
     Ec,
+    /// Memorials
     Ml,
+    /// Presidential Messages
     Pm,
+    /// Petitions
     Pt,
 }
 

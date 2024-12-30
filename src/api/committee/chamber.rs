@@ -5,15 +5,16 @@ use std::borrow::Cow;
 
 use crate::{endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
+use super::{CommitteeChamber, Format};
 
 mod committee_code;
 
+/// Represents the /committee/:chamber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Chamber {
     #[builder(setter(into))]
-    chamber: crate::api::Chamber,
+    chamber: CommitteeChamber,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -61,7 +62,7 @@ mod tests {
     #[test]
     fn is_sufficient() {
         Chamber::builder()
-            .chamber(crate::api::Chamber::House)
+            .chamber(crate::api::committee::CommitteeChamber::House)
             .build()
             .unwrap();
     }
@@ -74,7 +75,7 @@ mod tests {
         let client = Cdg::new(auth).unwrap();
 
         let endpoint = Chamber::builder()
-            .chamber(crate::api::Chamber::House)
+            .chamber(crate::api::committee::CommitteeChamber::House)
             .build()
             .unwrap();
 

@@ -8,6 +8,7 @@ use super::Format;
 
 mod requirement_number;
 
+/// Represents the /house-requirement endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct HouseRequirement {

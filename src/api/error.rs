@@ -3,6 +3,8 @@ use thiserror::Error;
 
 use crate::cdg::CdgError;
 
+/// Error types that can be returned or occur when communicating with the
+/// congress.gov api.
 #[derive(Debug, Error)]
 pub enum ApiError<E>
 where
@@ -15,7 +17,7 @@ where
         #[from]
         source: url::ParseError,
     },
-    #[error("feild to parse uri: {}", source)]
+    #[error("failed to parse uri: {}", source)]
     UriParse {
         #[from]
         source: http::uri::InvalidUri,

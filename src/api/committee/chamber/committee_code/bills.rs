@@ -3,15 +3,16 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
+/// Represents the /committee/:chamber/:committeeCode/bills endpoint.
 #[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
 pub struct Bills<'a> {
     #[builder(setter(into))]
-    chamber: crate::api::Chamber,
+    chamber: CommitteeChamber,
     #[builder(setter(into))]
     committee_code: Cow<'a, str>,
     #[builder(default)]
@@ -62,13 +63,16 @@ impl Endpoint for Bills<'_> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::committee::chamber::committee_code::bills::Bills, auth::Auth, cdg::Cdg, query::Query,
+        api::committee::{chamber::committee_code::bills::Bills, CommitteeChamber},
+        auth::Auth,
+        cdg::Cdg,
+        query::Query,
     };
 
     #[test]
     fn is_sufficient() {
         Bills::builder()
-            .chamber(crate::api::Chamber::House)
+            .chamber(CommitteeChamber::House)
             .committee_code("hspw00")
             .build()
             .unwrap();
@@ -82,7 +86,7 @@ mod tests {
         let client = Cdg::new(auth).unwrap();
 
         let endpoint = Bills::builder()
-            .chamber(crate::api::Chamber::House)
+            .chamber(CommitteeChamber::House)
             .committee_code("hspw00")
             .build()
             .unwrap();

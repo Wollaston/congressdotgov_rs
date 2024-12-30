@@ -8,6 +8,7 @@ use super::Format;
 
 mod issue_number;
 
+/// Represents the /daily-congressional-record/:volumeNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct VolumeNumber {

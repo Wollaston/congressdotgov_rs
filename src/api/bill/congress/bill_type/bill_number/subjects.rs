@@ -5,6 +5,7 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
+/// Represents the /bill/:congress/:billtype/:billnumber/subjects endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Subjects {

@@ -9,13 +9,14 @@ use super::Format;
 
 mod report_number;
 
+/// Represents the /committee-report/:congress/:reportType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct ReportType {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
-    report_type: crate::api::ReportType,
+    report_type: CommitteeReportType,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -64,6 +65,23 @@ impl Endpoint for ReportType {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CommitteeReportType {
+    Hrpt,
+    Srpt,
+    Erpt,
+}
+
+impl CommitteeReportType {
+    fn as_str(self) -> &'static str {
+        match self {
+            CommitteeReportType::Hrpt => "hrpt",
+            CommitteeReportType::Srpt => "srpt",
+            CommitteeReportType::Erpt => "erpt",
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
@@ -71,11 +89,13 @@ mod tests {
         query::Query,
     };
 
+    use super::CommitteeReportType;
+
     #[test]
     fn is_sufficient() {
         ReportType::builder()
             .congress(118_u16)
-            .report_type(crate::api::ReportType::Hrpt)
+            .report_type(CommitteeReportType::Hrpt)
             .build()
             .unwrap();
     }
@@ -89,7 +109,7 @@ mod tests {
 
         let endpoint = ReportType::builder()
             .congress(118_u16)
-            .report_type(crate::api::ReportType::Hrpt)
+            .report_type(CommitteeReportType::Hrpt)
             .build()
             .unwrap();
 

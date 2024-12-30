@@ -9,6 +9,7 @@ use super::{Format, Sort};
 
 mod bill_type;
 
+/// Represents the /summaries/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Congress {

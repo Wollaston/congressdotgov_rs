@@ -8,6 +8,7 @@ use super::Format;
 
 mod communication_number;
 
+/// Represents the /senate-communication/:congress/:communicationType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct CommunicationType {
@@ -54,10 +55,14 @@ impl Endpoint for CommunicationType {
     }
 }
 
+/// The different Senate Communication Types.
 #[derive(Debug, Clone, Copy)]
-enum SenateCommunicationType {
+pub enum SenateCommunicationType {
+    /// Executive Communications
     Ec,
+    /// Presidential Messages
     Pm,
+    /// Petitions or Memorials
     Pom,
 }
 

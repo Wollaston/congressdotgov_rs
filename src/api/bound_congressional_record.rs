@@ -8,6 +8,7 @@ use super::Format;
 
 mod year;
 
+/// Represents the /bound-congressional-record endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct BoundCongressionalRecord {

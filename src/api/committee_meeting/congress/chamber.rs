@@ -8,6 +8,7 @@ use super::Format;
 
 mod event_id;
 
+/// Represents the /committee-meeting/:congress/:chamber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Chamber {

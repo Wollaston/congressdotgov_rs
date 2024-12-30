@@ -3,17 +3,18 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
+/// Represents the /committee/:congress/:chamber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Chamber {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
-    chamber: crate::api::Chamber,
+    chamber: CommitteeChamber,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -56,13 +57,18 @@ impl Endpoint for Chamber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::committee::congress::chamber::Chamber, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{
+        api::committee::{congress::chamber::Chamber, CommitteeChamber},
+        auth::Auth,
+        cdg::Cdg,
+        query::Query,
+    };
 
     #[test]
     fn is_sufficient() {
         Chamber::builder()
             .congress(118_u16)
-            .chamber(crate::api::Chamber::House)
+            .chamber(CommitteeChamber::House)
             .build()
             .unwrap();
     }
@@ -76,7 +82,7 @@ mod tests {
 
         let endpoint = Chamber::builder()
             .congress(118_u16)
-            .chamber(crate::api::Chamber::House)
+            .chamber(CommitteeChamber::House)
             .build()
             .unwrap();
 

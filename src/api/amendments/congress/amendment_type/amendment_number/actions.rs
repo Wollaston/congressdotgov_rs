@@ -2,10 +2,11 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use super::{CongressionalAmendmentType, Format};
-
 use crate::{endpoint::Endpoint, params::QueryParams};
 
+use super::{CongressionalAmendmentType, Format};
+
+/// Represents the /amendment/:congress/:amendmentType/:amendmentNumber/actions endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Actions {

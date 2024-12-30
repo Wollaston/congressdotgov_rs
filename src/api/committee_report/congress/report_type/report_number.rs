@@ -4,17 +4,18 @@ use std::borrow::Cow;
 
 use crate::{endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
+use super::{CommitteeReportType, Format};
 
 mod text;
 
+/// Represents the /committee-report/:congress/:reportType/:reportNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct ReportNumber {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
-    report_type: crate::api::ReportType,
+    report_type: CommitteeReportType,
     #[builder(setter(into))]
     report_number: u32,
     #[builder(default)]
@@ -54,15 +55,19 @@ impl Endpoint for ReportNumber {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::committee_report::congress::report_type::report_number::ReportNumber, auth::Auth,
-        cdg::Cdg, query::Query,
+        api::committee_report::congress::report_type::{
+            report_number::ReportNumber, CommitteeReportType,
+        },
+        auth::Auth,
+        cdg::Cdg,
+        query::Query,
     };
 
     #[test]
     fn is_sufficient() {
         ReportNumber::builder()
             .congress(118_u16)
-            .report_type(crate::api::ReportType::Hrpt)
+            .report_type(CommitteeReportType::Hrpt)
             .report_number(617_u32)
             .build()
             .unwrap();
@@ -77,7 +82,7 @@ mod tests {
 
         let endpoint = ReportNumber::builder()
             .congress(118_u16)
-            .report_type(crate::api::ReportType::Hrpt)
+            .report_type(CommitteeReportType::Hrpt)
             .report_number(617_u32)
             .build()
             .unwrap();

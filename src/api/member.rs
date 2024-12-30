@@ -11,6 +11,7 @@ mod bioguide_id;
 mod congress;
 mod state_code;
 
+/// Represents the /member endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Member {
@@ -57,8 +58,11 @@ impl Endpoint for Member {
     }
 }
 
+/// The different possible state codes that can be used when querying
+/// and filtering Congressional member data. These match the two-digit
+/// postal codes for the 50 U.S. states and the District of Columbia.
 #[derive(Debug, Clone, Copy)]
-enum StateCode {
+pub enum StateCode {
     AL,
     AK,
     AZ,
@@ -70,7 +74,6 @@ enum StateCode {
     DC,
     FL,
     GA,
-    GU,
     HI,
     ID,
     IL,
@@ -128,7 +131,6 @@ impl StateCode {
             DC => "DC",
             FL => "FL",
             GA => "GA",
-            GU => "GU",
             HI => "HI",
             ID => "ID",
             IL => "IL",

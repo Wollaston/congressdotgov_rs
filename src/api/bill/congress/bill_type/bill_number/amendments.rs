@@ -1,9 +1,10 @@
+use derive_builder::Builder;
+use http::Method;
 use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
-use derive_builder::Builder;
-use http::Method;
 
+/// Represents the /bill/:congress/:billtype/:billnumber/amendments endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Amendments {

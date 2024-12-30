@@ -10,6 +10,7 @@ use super::Format;
 mod chamber;
 mod congress;
 
+/// Represents the /committee endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Committee {
@@ -50,6 +51,26 @@ impl Endpoint for Committee {
         params.push_opt("to_date_time", self.to_date_time);
 
         params
+    }
+}
+
+/// Chamber options for the Committee resource.
+///
+/// This differs from CommitteeChamber enum with its Joint variant.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CommitteeChamber {
+    House,
+    Senate,
+    Joint,
+}
+
+impl CommitteeChamber {
+    fn as_str(self) -> &'static str {
+        match self {
+            CommitteeChamber::House => "house",
+            CommitteeChamber::Senate => "senate",
+            CommitteeChamber::Joint => "joint",
+        }
     }
 }
 

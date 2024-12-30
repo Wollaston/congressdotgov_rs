@@ -9,6 +9,7 @@ use super::Format;
 
 mod amendment_type;
 
+/// Represents the /amendment/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Congress {

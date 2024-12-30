@@ -53,7 +53,11 @@ pub mod senate_communication;
 pub mod summaries;
 pub mod treaty;
 
-#[derive(Debug, Clone, Copy)]
+/// Chamber options for Committee endpoints.
+///
+/// This differs from the Chamber enum for the Committee
+/// resource as this has the NoChamber variant.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CommitteeChamber {
     House,
     Senate,
@@ -70,70 +74,25 @@ impl CommitteeChamber {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum Chamber {
-    House,
-    Senate,
-    Joint,
-}
-
-impl Chamber {
-    fn as_str(self) -> &'static str {
-        match self {
-            Chamber::House => "house",
-            Chamber::Senate => "senate",
-            Chamber::Joint => "joint",
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-pub enum ReportType {
-    Hrpt,
-    Srpt,
-    Erpt,
-}
-
-impl ReportType {
-    fn as_str(self) -> &'static str {
-        match self {
-            ReportType::Hrpt => "hrpt",
-            ReportType::Srpt => "srpt",
-            ReportType::Erpt => "erpt",
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-pub enum LawType {
-    Public,
-    Private,
-}
-
-impl LawType {
-    fn as_str(self) -> &'static str {
-        match self {
-            LawType::Public => "pub",
-            LawType::Private => "priv",
-        }
-    }
-}
-
-impl Default for LawType {
-    fn default() -> Self {
-        Self::Public
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
+/// The possible Congressional bill types for both
+/// the House of Representatives and Senate.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BillType {
+    /// H.R. - House Bill
     Hr,
+    /// S. - Senate Bill
     S,
+    /// H.J. Res. - House Joint Resolution
     Hjres,
+    /// S.J. Res. - Senate Joint Resolution
     Sjres,
+    /// S.J. Res. - House Concurrent Resolution
     Hconres,
+    /// S. Con. Res. - Senate Concurrent Resolution
     Sconres,
+    /// H. Res. - House Simple Resolution
     Hres,
+    /// S. Res - Senate Simple Resolution
     Sres,
 }
 
@@ -152,6 +111,8 @@ impl BillType {
     }
 }
 
+/// The congress.gov API can return data in either Json or XML
+/// format. The default for this crate is Json.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Format {
     Json,
@@ -179,9 +140,13 @@ impl Format {
     }
 }
 
+/// Certain endpoints allow the response to be sorted
+/// in either Ascending or Descending order.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Sort {
+    /// Ascending order
     Asc,
+    /// Descending order
     Desc,
 }
 

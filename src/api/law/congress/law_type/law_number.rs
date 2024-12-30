@@ -6,6 +6,7 @@ use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 use super::LawType;
 
+/// Represents the /law/:congress/:lawType/:lawNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct CongressByLawTypeByLawNumber {

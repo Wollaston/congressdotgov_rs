@@ -9,6 +9,7 @@ use super::Format;
 
 mod amendment_number;
 
+/// Represents the /amendment/:congress/:amendmentType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct AmendmentType {
@@ -61,6 +62,7 @@ impl Endpoint for AmendmentType {
     }
 }
 
+/// The possible Amendment Types in Congress.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CongressionalAmendmentType {
     Hamdt,

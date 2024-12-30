@@ -6,6 +6,7 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
+/// Represents the /daily-congressional-record/:volumeNumber/:issueNumber/articles endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Articles {

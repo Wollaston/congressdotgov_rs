@@ -1,20 +1,25 @@
+use http::{Method, Request};
+use serde::de::DeserializeOwned;
+use std::borrow::Cow;
+use url::Url;
+
 use crate::{
     api::error::ApiError,
     client::Client,
     params::QueryParams,
     query::{self, Query},
 };
-use http::{Method, Request};
-use serde::de::DeserializeOwned;
-use std::borrow::Cow;
-use url::Url;
 
+/// The URL base for the congress.gov REST API.
+/// Currently, there is only one variant for the current
+/// V3 API.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum UrlBase {
     ApiV3,
 }
 
 impl UrlBase {
+    /// Get the endpoint for a given URL base.
     pub fn endpoint_for<C>(&self, client: &C, endpoint: &str) -> Result<Url, ApiError<C::Error>>
     where
         C: Client,
@@ -25,15 +30,21 @@ impl UrlBase {
     }
 }
 
+/// A trait for providing the necessary information for a single REST API endpoint.
 pub trait Endpoint {
+    /// The HTTP method for the endpoint, e.g. GET.
     fn method(&self) -> Method;
 
+    /// The path for the endpoint.
     fn endpoint(&self) -> Cow<'static, str>;
 
+    /// The URL base for the endpoint, defaulting to the
+    /// current V3 URL base.
     fn url_base(&self) -> UrlBase {
         UrlBase::ApiV3
     }
 
+    /// Query parameters for the endpoint.
     fn parameters(&self) -> QueryParams {
         QueryParams::default()
     }

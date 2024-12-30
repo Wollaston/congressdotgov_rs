@@ -6,6 +6,7 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::{Format, HouseCommunicationType};
 
+/// Represents the /house-communication/:congress/:communicationType/:communicationNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct CommunicationNumber {

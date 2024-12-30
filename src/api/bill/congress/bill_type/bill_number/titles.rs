@@ -1,10 +1,11 @@
-use std::borrow::Cow;
-
-use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
+use std::borrow::Cow;
 
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
+
+/// Represents the /bill/:congress/:billtype/:billnumber/titles endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Titles {

@@ -6,6 +6,9 @@ use crate::{api::member::StateCode, endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
+/// Represents the /member/congress/:congress/:stateCode/:district endpoint.
+///
+/// There is no /member/congress/:congress/:stateCode endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct StateCodeDistrict {

@@ -8,6 +8,7 @@ use super::Format;
 
 mod chamber;
 
+/// Represents the /committee-meeting/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Congress {

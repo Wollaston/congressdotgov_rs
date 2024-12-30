@@ -7,6 +7,7 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::{Format, Sort};
 
+/// Represents the /summaries/:congress/:billType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct BillType {

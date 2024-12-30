@@ -9,6 +9,7 @@ use super::Format;
 mod cosponsored_legislation;
 mod sponsored_legislation;
 
+/// Represents the /member/:bioguideId endpoint.
 #[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
 pub struct BioguideId<'a> {

@@ -8,6 +8,7 @@ use super::Format;
 
 mod text;
 
+/// Represents the /committee-print/:congress/:chamber/:jacketNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct JacketNumber {

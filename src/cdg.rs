@@ -1,11 +1,13 @@
-use crate::{api::error::ApiError, auth::Auth};
 use bytes::Bytes;
 use http::{HeaderValue, Response};
 use reqwest::{Client, Request};
+use thiserror::Error;
 use url::Url;
 
-use thiserror::Error;
+use crate::{api::error::ApiError, auth::Auth};
 
+/// Various error types that can occur when using the Cdg struct
+/// and its values.
 #[derive(Debug, Error)]
 pub enum CdgError {
     #[error("failed to parse url: {}", source)]
@@ -13,7 +15,7 @@ pub enum CdgError {
         #[from]
         source: url::ParseError,
     },
-    #[error("feild to parse uri: {}", source)]
+    #[error("failed to parse uri: {}", source)]
     UriParse {
         #[from]
         source: http::uri::InvalidUri,
@@ -36,6 +38,9 @@ pub enum CdgError {
         source: serde_json::Error,
     },
 }
+
+/// The primary struct used when consuming Endpoints. Holds
+/// a reusable reqwest::Client, base url, and Auth.
 #[derive(Debug, Clone)]
 pub struct Cdg {
     pub client: Client,
@@ -44,6 +49,7 @@ pub struct Cdg {
 }
 
 impl Cdg {
+    /// Creates a new Cdg struct with the provided Auth.
     pub fn new(auth: Auth) -> Result<Cdg, CdgError> {
         Ok(Cdg {
             client: reqwest::Client::new(),
@@ -56,10 +62,14 @@ impl Cdg {
 impl crate::client::Client for Cdg {
     type Error = CdgError;
 
+    /// Constructs an endpoint URL by combining the base_url
+    /// with the provided endpoint.
     fn rest_endpoint(&self, endpoint: &str) -> Result<Url, ApiError<Self::Error>> {
         Ok(self.base_url.join(endpoint)?)
     }
 
+    /// Appends the auth token to the URL for the request. The congress.gov
+    /// API expects requests of the form https://api.congress.gov/v3/resource?api_key=[INSERT_KEY].
     fn set_auth(&self, url: &mut Url) {
         let mut pairs = url.query_pairs_mut();
         match &self.auth {
@@ -67,6 +77,7 @@ impl crate::client::Client for Cdg {
         };
     }
 
+    /// Performs a REST API call for the given request and returns the response as Bytes.
     async fn rest(
         &self,
         request: http::request::Builder,

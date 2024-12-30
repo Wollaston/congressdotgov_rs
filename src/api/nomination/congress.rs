@@ -9,6 +9,7 @@ use super::Format;
 
 mod nomination_number;
 
+/// Represents the /nomination/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Congress {

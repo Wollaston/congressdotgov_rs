@@ -8,6 +8,7 @@ use super::Format;
 
 mod month;
 
+/// Represents the /bound-congressional-record/:year endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Year {

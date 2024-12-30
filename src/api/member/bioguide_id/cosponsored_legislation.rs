@@ -6,6 +6,7 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
+/// Represents the /member/:bioguideId/cosponsored-legislation endpoint.
 #[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
 pub struct CosponsoredLegislation<'a> {

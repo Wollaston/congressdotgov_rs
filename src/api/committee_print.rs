@@ -9,6 +9,7 @@ use super::Format;
 
 mod congress;
 
+/// Represents the /committee-print endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct CommitteePrint {

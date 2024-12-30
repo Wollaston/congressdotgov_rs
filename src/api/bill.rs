@@ -1,14 +1,17 @@
-use std::borrow::Cow;
+//! Bill API endpoints and types.
 
-use crate::{endpoint::Endpoint, params::QueryParams};
 use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
+use std::borrow::Cow;
+
+use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::{Format, Sort};
 
 mod congress;
 
+/// Represents the /bill endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Bill {

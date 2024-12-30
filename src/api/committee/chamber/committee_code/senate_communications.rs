@@ -2,15 +2,16 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
+/// Represents the /committee/:chamber/:committeeCode/senate-communication endpoint.
 #[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
 pub struct SenateCommunication<'a> {
     #[builder(setter(into))]
-    chamber: crate::api::Chamber,
+    chamber: CommitteeChamber,
     #[builder(setter(into))]
     committee_code: Cow<'a, str>,
     #[builder(default)]
@@ -55,14 +56,18 @@ impl Endpoint for SenateCommunication<'_> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::committee::chamber::committee_code::senate_communications::SenateCommunication,
-        auth::Auth, cdg::Cdg, query::Query,
+        api::committee::{
+            chamber::committee_code::senate_communications::SenateCommunication, CommitteeChamber,
+        },
+        auth::Auth,
+        cdg::Cdg,
+        query::Query,
     };
 
     #[test]
     fn is_sufficient() {
         SenateCommunication::builder()
-            .chamber(crate::api::Chamber::Senate)
+            .chamber(CommitteeChamber::Senate)
             .committee_code("hspw00")
             .build()
             .unwrap();
@@ -76,7 +81,7 @@ mod tests {
         let client = Cdg::new(auth).unwrap();
 
         let endpoint = SenateCommunication::builder()
-            .chamber(crate::api::Chamber::Senate)
+            .chamber(CommitteeChamber::Senate)
             .committee_code("ssas00")
             .build()
             .unwrap();

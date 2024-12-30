@@ -107,12 +107,14 @@ impl ParamValue<'static> for Sort {
     }
 }
 
+/// A structure for query parameters.
 #[derive(Debug, Default, Clone)]
 pub struct QueryParams<'a> {
     params: Vec<(Cow<'a, str>, Cow<'a, str>)>,
 }
 
 impl<'a> QueryParams<'a> {
+    /// Push a single parameter.
     pub fn push<'b, K, V>(&mut self, key: K, value: V) -> &mut Self
     where
         K: Into<Cow<'a, str>>,
@@ -123,6 +125,7 @@ impl<'a> QueryParams<'a> {
         self
     }
 
+    /// Push a single optional parameter.
     pub fn push_opt<'b, K, V>(&mut self, key: K, value: Option<V>) -> &mut Self
     where
         K: Into<Cow<'a, str>>,
@@ -135,6 +138,7 @@ impl<'a> QueryParams<'a> {
         self
     }
 
+    /// Add the parameters to a URL.
     pub fn add_to_url(&self, url: &mut Url) {
         let mut pairs = url.query_pairs_mut();
         pairs.extend_pairs(self.params.iter());

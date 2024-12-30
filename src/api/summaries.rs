@@ -9,6 +9,7 @@ use super::{Format, Sort};
 
 mod congress;
 
+/// Represents the /summaries endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct Summaries {

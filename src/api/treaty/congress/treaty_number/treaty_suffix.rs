@@ -8,6 +8,7 @@ use super::Format;
 
 mod actions;
 
+/// Represents the /treaty/:congress/:treatyNumber/:treatySuffix endpoint.
 #[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
 pub struct TreatySuffix<'a> {

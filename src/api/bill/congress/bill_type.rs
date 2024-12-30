@@ -11,6 +11,7 @@ use http::Method;
 
 mod bill_number;
 
+/// Represents the /bill/:congress/:billtype endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct BillType {

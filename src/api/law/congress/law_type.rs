@@ -2,14 +2,13 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{
-    api::{Format, LawType},
-    endpoint::Endpoint,
-    params::QueryParams,
-};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
+
+use super::LawType;
 
 mod law_number;
 
+/// Represents the /law/:congress/:lawType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
 pub struct CongressByLawType {
@@ -63,7 +62,7 @@ mod tests {
     fn is_sufficient() {
         CongressByLawType::builder()
             .congress(118_u16)
-            .law_type(super::LawType::Public)
+            .law_type(LawType::Public)
             .build()
             .unwrap();
     }
