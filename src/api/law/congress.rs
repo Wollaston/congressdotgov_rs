@@ -4,8 +4,6 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-mod law_type;
-
 /// Represents the /law/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
@@ -43,30 +41,6 @@ impl Endpoint for Congress {
         params.push_opt("limit", self.limit);
 
         params
-    }
-}
-
-/// The possible law types in Congress. Also known as 'slip laws.'
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LawType {
-    /// Public laws affect society as a whole
-    Public,
-    /// Private laws affect an individual, family, or small group
-    Private,
-}
-
-impl LawType {
-    fn as_str(self) -> &'static str {
-        match self {
-            LawType::Public => "pub",
-            LawType::Private => "priv",
-        }
-    }
-}
-
-impl Default for LawType {
-    fn default() -> Self {
-        Self::Public
     }
 }
 

@@ -2,20 +2,20 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
+use crate::{
+    api::{law::CongressionalLawType, Format},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
-use super::LawType;
-
-/// Represents the /law/:congress/:lawType/:lawNumber endpoint.
+/// Represents the /law/:congress/:lawType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct CongressByLawTypeByLawNumber {
+pub struct LawType {
     #[builder(setter(into))]
     congress: u16,
     #[builder(default)]
-    law_type: LawType,
-    #[builder(default)]
-    law_number: u32,
+    law_type: CongressionalLawType,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -24,25 +24,19 @@ pub struct CongressByLawTypeByLawNumber {
     limit: Option<u8>,
 }
 
-impl CongressByLawTypeByLawNumber {
-    pub fn builder() -> CongressByLawTypeByLawNumberBuilder {
-        CongressByLawTypeByLawNumberBuilder::default()
+impl LawType {
+    pub fn builder() -> LawTypeBuilder {
+        LawTypeBuilder::default()
     }
 }
 
-impl Endpoint for CongressByLawTypeByLawNumber {
+impl Endpoint for LawType {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!(
-            "law/{}/{}/{}",
-            self.congress,
-            self.law_type.as_str(),
-            self.law_number
-        )
-        .into()
+        format!("law/{}/{}", self.congress, self.law_type.as_str()).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -58,19 +52,15 @@ impl Endpoint for CongressByLawTypeByLawNumber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::law::congress::law_type::law_number::CongressByLawTypeByLawNumber, auth::Auth,
-        cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, query::Query, Cdg};
 
-    use super::LawType;
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        CongressByLawTypeByLawNumber::builder()
+        LawType::builder()
             .congress(118_u16)
-            .law_type(super::LawType::Public)
-            .law_number(108)
+            .law_type(CongressionalLawType::Public)
             .build()
             .unwrap();
     }
@@ -82,10 +72,9 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = CongressByLawTypeByLawNumber::builder()
+        let endpoint = LawType::builder()
             .congress(118_u16)
-            .law_type(LawType::Public)
-            .law_number(108)
+            .law_type(CongressionalLawType::Public)
             .build()
             .unwrap();
 
