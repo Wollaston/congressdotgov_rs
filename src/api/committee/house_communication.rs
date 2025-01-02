@@ -2,14 +2,16 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
+use crate::{
+    api::{committee::CommitteeChamber, Format},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
-use super::Format;
-
-/// Represents the /committee/:chamber/:committeeCode/senate-communication endpoint.
+/// Represents the /committee/:chamber/:committeeCode/house-communication endpoint.
 #[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
-pub struct SenateCommunication<'a> {
+pub struct HouseCommunication<'a> {
     #[builder(setter(into))]
     chamber: CommitteeChamber,
     #[builder(setter(into))]
@@ -22,20 +24,20 @@ pub struct SenateCommunication<'a> {
     limit: Option<u8>,
 }
 
-impl<'a> SenateCommunication<'a> {
-    pub fn builder() -> SenateCommunicationBuilder<'a> {
-        SenateCommunicationBuilder::default()
+impl<'a> HouseCommunication<'a> {
+    pub fn builder() -> HouseCommunicationBuilder<'a> {
+        HouseCommunicationBuilder::default()
     }
 }
 
-impl Endpoint for SenateCommunication<'_> {
+impl Endpoint for HouseCommunication<'_> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "committee/{}/{}/senate-communication",
+            "committee/{}/{}/house-communication",
             self.chamber.as_str(),
             self.committee_code
         )
@@ -55,19 +57,14 @@ impl Endpoint for SenateCommunication<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::committee::{
-            chamber::committee_code::senate_communications::SenateCommunication, CommitteeChamber,
-        },
-        auth::Auth,
-        cdg::Cdg,
-        query::Query,
-    };
+    use crate::{api::committee::CommitteeChamber, auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        SenateCommunication::builder()
-            .chamber(CommitteeChamber::Senate)
+        HouseCommunication::builder()
+            .chamber(CommitteeChamber::House)
             .committee_code("hspw00")
             .build()
             .unwrap();
@@ -80,9 +77,9 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = SenateCommunication::builder()
-            .chamber(CommitteeChamber::Senate)
-            .committee_code("ssas00")
+        let endpoint = HouseCommunication::builder()
+            .chamber(CommitteeChamber::House)
+            .committee_code("hspw00")
             .build()
             .unwrap();
 

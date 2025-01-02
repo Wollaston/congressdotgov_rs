@@ -3,14 +3,16 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
+use crate::{
+    api::{committee::CommitteeChamber, Format},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
 /// Represents the /committee/:congress/:chamber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Chamber {
+pub struct ChamberByCongress {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
@@ -27,13 +29,13 @@ pub struct Chamber {
     to_date_time: Option<DateTime<Utc>>,
 }
 
-impl Chamber {
-    pub fn builder() -> ChamberBuilder {
-        ChamberBuilder::default()
+impl ChamberByCongress {
+    pub fn builder() -> ChamberByCongressBuilder {
+        ChamberByCongressBuilder::default()
     }
 }
 
-impl Endpoint for Chamber {
+impl Endpoint for ChamberByCongress {
     fn method(&self) -> Method {
         Method::GET
     }
@@ -57,16 +59,13 @@ impl Endpoint for Chamber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::committee::{congress::chamber::Chamber, CommitteeChamber},
-        auth::Auth,
-        cdg::Cdg,
-        query::Query,
-    };
+    use crate::{api::committee::CommitteeChamber, auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Chamber::builder()
+        ChamberByCongress::builder()
             .congress(118_u16)
             .chamber(CommitteeChamber::House)
             .build()
@@ -80,7 +79,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Chamber::builder()
+        let endpoint = ChamberByCongress::builder()
             .congress(118_u16)
             .chamber(CommitteeChamber::House)
             .build()

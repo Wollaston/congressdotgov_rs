@@ -1,15 +1,18 @@
+use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
+use crate::{
+    api::{committee::CommitteeChamber, Format},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
-use super::Format;
-
-/// Represents the /committee/:chamber/:committeeCode/nominations endpoint.
+/// Represents the /committee/:chamber/:committeeCode/bills endpoint.
 #[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
-pub struct Nominations<'a> {
+pub struct Bills<'a> {
     #[builder(setter(into))]
     chamber: CommitteeChamber,
     #[builder(setter(into))]
@@ -20,22 +23,26 @@ pub struct Nominations<'a> {
     offset: Option<u32>,
     #[builder(default)]
     limit: Option<u8>,
+    #[builder(default)]
+    from_date_time: Option<DateTime<Utc>>,
+    #[builder(default)]
+    to_date_time: Option<DateTime<Utc>>,
 }
 
-impl<'a> Nominations<'a> {
-    pub fn builder() -> NominationsBuilder<'a> {
-        NominationsBuilder::default()
+impl<'a> Bills<'a> {
+    pub fn builder() -> BillsBuilder<'a> {
+        BillsBuilder::default()
     }
 }
 
-impl Endpoint for Nominations<'_> {
+impl Endpoint for Bills<'_> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "committee/{}/{}/nominations",
+            "committee/{}/{}/bills",
             self.chamber.as_str(),
             self.committee_code
         )
@@ -48,6 +55,8 @@ impl Endpoint for Nominations<'_> {
         params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
+        params.push_opt("from_date_time", self.from_date_time);
+        params.push_opt("to_date_time", self.to_date_time);
 
         params
     }
@@ -55,16 +64,13 @@ impl Endpoint for Nominations<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::committee::{chamber::committee_code::nominations::Nominations, CommitteeChamber},
-        auth::Auth,
-        cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Nominations::builder()
+        Bills::builder()
             .chamber(CommitteeChamber::House)
             .committee_code("hspw00")
             .build()
@@ -78,7 +84,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Nominations::builder()
+        let endpoint = Bills::builder()
             .chamber(CommitteeChamber::House)
             .committee_code("hspw00")
             .build()

@@ -3,11 +3,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
-
-mod chamber;
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 /// Represents the /committee/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -57,7 +53,9 @@ impl Endpoint for Congress {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::committee::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {

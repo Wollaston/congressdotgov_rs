@@ -2,40 +2,38 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
+use crate::{
+    api::{committee::CommitteeChamber, Format},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
-use super::Format;
-
-/// Represents the /committee/:chamber/:committeeCode/house-communication endpoint.
+/// Represents the /committee/:chamber/:committeeCode endpoint.
 #[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
-pub struct HouseCommunication<'a> {
+pub struct CommitteeCode<'a> {
     #[builder(setter(into))]
     chamber: CommitteeChamber,
     #[builder(setter(into))]
     committee_code: Cow<'a, str>,
     #[builder(default)]
     format: Format,
-    #[builder(default)]
-    offset: Option<u32>,
-    #[builder(default)]
-    limit: Option<u8>,
 }
 
-impl<'a> HouseCommunication<'a> {
-    pub fn builder() -> HouseCommunicationBuilder<'a> {
-        HouseCommunicationBuilder::default()
+impl<'a> CommitteeCode<'a> {
+    pub fn builder() -> CommitteeCodeBuilder<'a> {
+        CommitteeCodeBuilder::default()
     }
 }
 
-impl Endpoint for HouseCommunication<'_> {
+impl Endpoint for CommitteeCode<'_> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "committee/{}/{}/house-communication",
+            "committee/{}/{}",
             self.chamber.as_str(),
             self.committee_code
         )
@@ -46,8 +44,6 @@ impl Endpoint for HouseCommunication<'_> {
         let mut params = QueryParams::default();
 
         params.push("format", self.format);
-        params.push_opt("offset", self.offset);
-        params.push_opt("limit", self.limit);
 
         params
     }
@@ -55,19 +51,13 @@ impl Endpoint for HouseCommunication<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::{
-            committee::chamber::committee_code::house_communications::HouseCommunication,
-            committee::CommitteeChamber,
-        },
-        auth::Auth,
-        cdg::Cdg,
-        query::Query,
-    };
+    use crate::{api::committee::CommitteeChamber, auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        HouseCommunication::builder()
+        CommitteeCode::builder()
             .chamber(CommitteeChamber::House)
             .committee_code("hspw00")
             .build()
@@ -81,7 +71,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = HouseCommunication::builder()
+        let endpoint = CommitteeCode::builder()
             .chamber(CommitteeChamber::House)
             .committee_code("hspw00")
             .build()

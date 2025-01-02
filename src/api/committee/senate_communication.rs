@@ -1,4 +1,3 @@
-use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
@@ -9,39 +8,40 @@ use crate::{
     params::QueryParams,
 };
 
-/// Represents the /committee/:congress/:chamber endpoint.
-#[derive(Debug, Clone, Copy, Builder)]
+/// Represents the /committee/:chamber/:committeeCode/senate-communication endpoint.
+#[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
-pub struct Chamber {
-    #[builder(setter(into))]
-    congress: u16,
+pub struct SenateCommunication<'a> {
     #[builder(setter(into))]
     chamber: CommitteeChamber,
+    #[builder(setter(into))]
+    committee_code: Cow<'a, str>,
     #[builder(default)]
     format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
     limit: Option<u8>,
-    #[builder(default)]
-    from_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    to_date_time: Option<DateTime<Utc>>,
 }
 
-impl Chamber {
-    pub fn builder() -> ChamberBuilder {
-        ChamberBuilder::default()
+impl<'a> SenateCommunication<'a> {
+    pub fn builder() -> SenateCommunicationBuilder<'a> {
+        SenateCommunicationBuilder::default()
     }
 }
 
-impl Endpoint for Chamber {
+impl Endpoint for SenateCommunication<'_> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("committee/{}/{}", self.congress, self.chamber.as_str()).into()
+        format!(
+            "committee/{}/{}/senate-communication",
+            self.chamber.as_str(),
+            self.committee_code
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -50,8 +50,6 @@ impl Endpoint for Chamber {
         params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
-        params.push_opt("from_date_time", self.from_date_time);
-        params.push_opt("to_date_time", self.to_date_time);
 
         params
     }
@@ -59,15 +57,15 @@ impl Endpoint for Chamber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::committee::CommitteeChamber, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
 
     use super::*;
 
     #[test]
     fn is_sufficient() {
-        Chamber::builder()
-            .congress(118_u16)
-            .chamber(CommitteeChamber::House)
+        SenateCommunication::builder()
+            .chamber(CommitteeChamber::Senate)
+            .committee_code("hspw00")
             .build()
             .unwrap();
     }
@@ -79,9 +77,9 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Chamber::builder()
-            .congress(118_u16)
-            .chamber(CommitteeChamber::House)
+        let endpoint = SenateCommunication::builder()
+            .chamber(CommitteeChamber::Senate)
+            .committee_code("ssas00")
             .build()
             .unwrap();
 

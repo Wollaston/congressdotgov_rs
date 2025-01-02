@@ -3,14 +3,16 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
+use crate::{
+    api::{committee::CommitteeChamber, Format},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
-use super::Format;
-
-/// Represents the /committee/:chamber/:committeeCode/bills endpoint.
+/// Represents the /committee/:chamber/:committeeCode/reports endpoint.
 #[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
-pub struct Bills<'a> {
+pub struct Reports<'a> {
     #[builder(setter(into))]
     chamber: CommitteeChamber,
     #[builder(setter(into))]
@@ -27,20 +29,20 @@ pub struct Bills<'a> {
     to_date_time: Option<DateTime<Utc>>,
 }
 
-impl<'a> Bills<'a> {
-    pub fn builder() -> BillsBuilder<'a> {
-        BillsBuilder::default()
+impl<'a> Reports<'a> {
+    pub fn builder() -> ReportsBuilder<'a> {
+        ReportsBuilder::default()
     }
 }
 
-impl Endpoint for Bills<'_> {
+impl Endpoint for Reports<'_> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "committee/{}/{}/bills",
+            "committee/{}/{}/reports",
             self.chamber.as_str(),
             self.committee_code
         )
@@ -62,16 +64,13 @@ impl Endpoint for Bills<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::committee::{chamber::committee_code::bills::Bills, CommitteeChamber},
-        auth::Auth,
-        cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Bills::builder()
+        Reports::builder()
             .chamber(CommitteeChamber::House)
             .committee_code("hspw00")
             .build()
@@ -85,7 +84,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Bills::builder()
+        let endpoint = Reports::builder()
             .chamber(CommitteeChamber::House)
             .committee_code("hspw00")
             .build()
