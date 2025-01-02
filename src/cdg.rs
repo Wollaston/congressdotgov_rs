@@ -43,8 +43,11 @@ pub enum CdgError {
 /// a reusable reqwest::Client, base url, and Auth.
 #[derive(Debug, Clone)]
 pub struct Cdg {
+    /// The HTTP client to use for API calls.
     pub client: Client,
+    /// The base URL for API calls.
     pub base_url: Url,
+    /// The authentication information to use when making API calls.
     pub auth: Auth,
 }
 

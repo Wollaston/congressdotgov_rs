@@ -65,8 +65,11 @@ impl Endpoint for AmendmentType {
 /// The possible Amendment Types in Congress.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CongressionalAmendmentType {
+    /// H.Amdt. - House amendment. Amends a House bill.
     Hamdt,
+    /// S.Amdt. - Senate amendment. Amends a Senate bill.
     Samdt,
+    /// Only available for the 97th and 98th Congresses.
     Suamdt,
 }
 
