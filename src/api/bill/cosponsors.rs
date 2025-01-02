@@ -4,20 +4,10 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-mod actions;
-mod amendments;
-mod committees;
-mod cosponsors;
-mod related_bills;
-mod subjects;
-mod summaries;
-mod text;
-mod titles;
-
-/// Represents the /bill/:congress/:billtype/:billnumber endpoint.
+/// Represents the /bill/:congress/:billtype/:billnumber/cosponsors endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct BillNumber {
+pub struct Cosponsors {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
@@ -26,22 +16,26 @@ pub struct BillNumber {
     bill_number: u32,
     #[builder(default)]
     format: Format,
+    #[builder(default)]
+    offset: Option<u32>,
+    #[builder(default)]
+    limit: Option<u8>,
 }
 
-impl BillNumber {
-    pub fn builder() -> BillNumberBuilder {
-        BillNumberBuilder::default()
+impl Cosponsors {
+    pub fn builder() -> CosponsorsBuilder {
+        CosponsorsBuilder::default()
     }
 }
 
-impl Endpoint for BillNumber {
+impl Endpoint for Cosponsors {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "bill/{}/{}/{}",
+            "bill/{}/{}/{}/cosponsors",
             self.congress,
             self.bill_type.as_str(),
             self.bill_number
@@ -53,6 +47,8 @@ impl Endpoint for BillNumber {
         let mut params = QueryParams::default();
 
         params.push("format", self.format);
+        params.push_opt("offset", self.offset);
+        params.push_opt("limit", self.limit);
 
         params
     }
@@ -60,13 +56,13 @@ impl Endpoint for BillNumber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::bill::congress::bill_type::bill_number::BillNumber, auth::Auth, cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn bll_is_sufficient() {
-        BillNumber::builder()
+        Cosponsors::builder()
             .congress(117_u8)
             .bill_type(crate::api::BillType::Hr)
             .bill_number(3076_u32)
@@ -81,7 +77,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = BillNumber::builder()
+        let endpoint = Cosponsors::builder()
             .congress(117_u8)
             .bill_type(crate::api::BillType::Hr)
             .bill_number(3076_u32)

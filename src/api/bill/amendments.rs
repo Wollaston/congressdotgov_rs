@@ -4,10 +4,10 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-/// Represents the /bill/:congress/:billtype/:billnumber/committees endpoint.
+/// Represents the /bill/:congress/:billtype/:billnumber/amendments endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Committees {
+pub struct Amendments {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
@@ -22,20 +22,20 @@ pub struct Committees {
     limit: Option<u8>,
 }
 
-impl Committees {
-    pub fn builder() -> CommitteesBuilder {
-        CommitteesBuilder::default()
+impl Amendments {
+    pub fn builder() -> AmendmentsBuilder {
+        AmendmentsBuilder::default()
     }
 }
 
-impl Endpoint for Committees {
+impl Endpoint for Amendments {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "bill/{}/{}/{}/committees",
+            "bill/{}/{}/{}/amendments",
             self.congress,
             self.bill_type.as_str(),
             self.bill_number
@@ -56,14 +56,13 @@ impl Endpoint for Committees {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::bill::congress::bill_type::bill_number::committees::Committees, auth::Auth, cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn bll_is_sufficient() {
-        Committees::builder()
+        Amendments::builder()
             .congress(117_u8)
             .bill_type(crate::api::BillType::Hr)
             .bill_number(3076_u32)
@@ -78,7 +77,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Committees::builder()
+        let endpoint = Amendments::builder()
             .congress(117_u8)
             .bill_type(crate::api::BillType::Hr)
             .bill_number(3076_u32)

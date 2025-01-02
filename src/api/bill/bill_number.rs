@@ -1,62 +1,48 @@
-use std::borrow::Cow;
-
-use crate::{
-    api::{Format, Sort},
-    endpoint::Endpoint,
-    params::QueryParams,
-};
-use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
+use std::borrow::Cow;
 
-mod bill_number;
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-/// Represents the /bill/:congress/:billtype endpoint.
+/// Represents the /bill/:congress/:billtype/:billnumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct BillType {
+pub struct BillNumber {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
     bill_type: crate::api::BillType,
+    #[builder(setter(into))]
+    bill_number: u32,
     #[builder(default)]
     format: Format,
-    #[builder(default)]
-    offset: Option<u32>,
-    #[builder(default)]
-    limit: Option<u8>,
-    #[builder(default)]
-    from_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    to_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    sort: Option<Sort>,
 }
 
-impl BillType {
-    pub fn builder() -> BillTypeBuilder {
-        BillTypeBuilder::default()
+impl BillNumber {
+    pub fn builder() -> BillNumberBuilder {
+        BillNumberBuilder::default()
     }
 }
 
-impl Endpoint for BillType {
+impl Endpoint for BillNumber {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("bill/{}/{}", self.congress, self.bill_type.as_str()).into()
+        format!(
+            "bill/{}/{}/{}",
+            self.congress,
+            self.bill_type.as_str(),
+            self.bill_number
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
         params.push("format", self.format);
-        params.push_opt("offset", self.offset);
-        params.push_opt("limit", self.limit);
-        params.push_opt("from_date_time", self.from_date_time);
-        params.push_opt("to_date_time", self.to_date_time);
-        params.push_opt("sort", self.sort);
 
         params
     }
@@ -64,13 +50,16 @@ impl Endpoint for BillType {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::bill::congress::bill_type::BillType, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn bll_is_sufficient() {
-        BillType::builder()
+        BillNumber::builder()
             .congress(117_u8)
             .bill_type(crate::api::BillType::Hr)
+            .bill_number(3076_u32)
             .build()
             .unwrap();
     }
@@ -82,9 +71,10 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = BillType::builder()
+        let endpoint = BillNumber::builder()
             .congress(117_u8)
             .bill_type(crate::api::BillType::Hr)
+            .bill_number(3076_u32)
             .build()
             .unwrap();
 

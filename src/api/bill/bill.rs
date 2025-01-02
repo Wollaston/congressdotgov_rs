@@ -9,12 +9,10 @@ use crate::{
     params::QueryParams,
 };
 
-/// Represents the /bill/:congress endpoint.
+/// Represents the /bill endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Congress {
-    #[builder(setter(into))]
-    congress: u8,
+pub struct Bill {
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -29,19 +27,19 @@ pub struct Congress {
     sort: Option<Sort>,
 }
 
-impl Congress {
-    pub fn builder() -> CongressBuilder {
-        CongressBuilder::default()
+impl Bill {
+    pub fn builder() -> BillBuilder {
+        BillBuilder::default()
     }
 }
 
-impl Endpoint for Congress {
+impl Endpoint for Bill {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("bill/{}", self.congress).into()
+        "bill".into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -66,7 +64,7 @@ mod tests {
 
     #[test]
     fn bll_is_sufficient() {
-        Congress::builder().congress(117_u8).build().unwrap();
+        Bill::builder().build().unwrap();
     }
 
     #[tokio::test]
@@ -76,7 +74,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Congress::builder().congress(117_u8).build().unwrap();
+        let endpoint = Bill::builder().build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

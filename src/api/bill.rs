@@ -1,81 +1,31 @@
+#![allow(clippy::module_inception)]
+
 //! Bill API endpoints and types.
 
-use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use http::Method;
-use std::borrow::Cow;
-
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::{Format, Sort};
-
+mod actions;
+mod amendments;
+mod bill;
+mod bill_number;
+mod bill_type;
+mod committees;
 mod congress;
+mod cosponsors;
+mod related_bills;
+mod subjects;
+mod summaries;
+mod text;
+mod titles;
 
-/// Represents the /bill endpoint.
-#[derive(Debug, Clone, Copy, Builder)]
-#[builder(setter(strip_option))]
-pub struct Bill {
-    #[builder(default)]
-    format: Format,
-    #[builder(default)]
-    offset: Option<u32>,
-    #[builder(default)]
-    limit: Option<u8>,
-    #[builder(default)]
-    from_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    to_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    sort: Option<Sort>,
-}
-
-impl Bill {
-    pub fn builder() -> BillBuilder {
-        BillBuilder::default()
-    }
-}
-
-impl Endpoint for Bill {
-    fn method(&self) -> Method {
-        Method::GET
-    }
-
-    fn endpoint(&self) -> Cow<'static, str> {
-        "bill".into()
-    }
-
-    fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params.push("format", self.format);
-        params.push_opt("offset", self.offset);
-        params.push_opt("limit", self.limit);
-        params.push_opt("from_date_time", self.from_date_time);
-        params.push_opt("to_date_time", self.to_date_time);
-        params.push_opt("sort", self.sort);
-
-        params
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{api::bill::Bill, auth::Auth, cdg::Cdg, query::Query};
-
-    #[test]
-    fn bll_is_sufficient() {
-        Bill::builder().build().unwrap();
-    }
-
-    #[tokio::test]
-    async fn endpoint() {
-        dotenvy::dotenv().unwrap();
-
-        let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
-        let client = Cdg::new(auth).unwrap();
-
-        let endpoint = Bill::builder().build().unwrap();
-
-        let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
-    }
-}
+pub use self::actions::{Actions, ActionsBuilder, ActionsBuilderError};
+pub use self::amendments::{Amendments, AmendmentsBuilder, AmendmentsBuilderError};
+pub use self::bill::{Bill, BillBuilder, BillBuilderError};
+pub use self::bill_number::{BillNumber, BillNumberBuilder, BillNumberBuilderError};
+pub use self::bill_type::{BillType, BillTypeBuilder, BillTypeBuilderError};
+pub use self::committees::{Committees, CommitteesBuilder, CommitteesBuilderError};
+pub use self::congress::{Congress, CongressBuilder, CongressBuilderError};
+pub use self::cosponsors::{Cosponsors, CosponsorsBuilder, CosponsorsBuilderError};
+pub use self::related_bills::{RelatedBills, RelatedBillsBuilder, RelatedBillsBuilderError};
+pub use self::subjects::{Subjects, SubjectsBuilder, SubjectsBuilderError};
+pub use self::summaries::{Summaries, SummariesBuilder, SummariesBuilderError};
+pub use self::text::{Text, TextBuilder, TextBuilderError};
+pub use self::titles::{Titles, TitlesBuilder, TitlesBuilderError};
