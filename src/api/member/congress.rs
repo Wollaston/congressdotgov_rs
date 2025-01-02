@@ -2,11 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
-
-mod state_code_district;
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 /// Represents the /member/congress/:congress endpoint.
 ///
@@ -55,7 +51,9 @@ impl Endpoint for Congress {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::member::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {

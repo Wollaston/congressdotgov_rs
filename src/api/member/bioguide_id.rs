@@ -2,12 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
-
-mod cosponsored_legislation;
-mod sponsored_legislation;
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 /// Represents the /member/:bioguideId endpoint.
 #[derive(Debug, Clone, Builder)]
@@ -45,7 +40,9 @@ impl Endpoint for BioguideId<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::member::bioguide_id::BioguideId, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {

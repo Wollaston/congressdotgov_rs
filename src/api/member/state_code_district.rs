@@ -4,31 +4,35 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-/// Represents the /member/:stateCode endpoint.
+use super::CongressionalStateCode;
+
+/// Represents the /member/:stateCode/:district endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct StateCode {
+pub struct StateCodeDistrict {
     #[builder(setter(into))]
-    state_code: crate::api::member::CongressionalStateCode,
+    state_code: CongressionalStateCode,
+    #[builder(setter(into))]
+    district: u16,
     #[builder(default)]
     format: Format,
     #[builder(default)]
     current_member: Option<bool>,
 }
 
-impl StateCode {
-    pub fn builder() -> StateCodeBuilder {
-        StateCodeBuilder::default()
+impl StateCodeDistrict {
+    pub fn builder() -> StateCodeDistrictBuilder {
+        StateCodeDistrictBuilder::default()
     }
 }
 
-impl Endpoint for StateCode {
+impl Endpoint for StateCodeDistrict {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("member/{}", self.state_code.as_str()).into()
+        format!("member/{}/{}", self.state_code.as_str(), self.district).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -49,8 +53,9 @@ mod tests {
 
     #[test]
     fn is_sufficient() {
-        StateCode::builder()
-            .state_code(crate::api::member::CongressionalStateCode::VA)
+        StateCodeDistrict::builder()
+            .state_code(crate::api::member::CongressionalStateCode::MI)
+            .district(10_u16)
             .build()
             .unwrap();
     }
@@ -62,8 +67,9 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = StateCode::builder()
+        let endpoint = StateCodeDistrict::builder()
             .state_code(crate::api::member::CongressionalStateCode::VA)
+            .district(10_u16)
             .build()
             .unwrap();
 

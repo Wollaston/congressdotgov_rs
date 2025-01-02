@@ -2,20 +2,22 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::member::StateCode, endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
+use crate::{
+    api::{member::CongressionalStateCode, Format},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
 /// Represents the /member/congress/:congress/:stateCode/:district endpoint.
 ///
 /// There is no /member/congress/:congress/:stateCode endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct StateCodeDistrict {
+pub struct CongressStateCodeDistrict {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
-    state_code: StateCode,
+    state_code: CongressionalStateCode,
     #[builder(setter(into))]
     district: u16,
     #[builder(default)]
@@ -24,13 +26,13 @@ pub struct StateCodeDistrict {
     current_member: Option<bool>,
 }
 
-impl StateCodeDistrict {
-    pub fn builder() -> StateCodeDistrictBuilder {
-        StateCodeDistrictBuilder::default()
+impl CongressStateCodeDistrict {
+    pub fn builder() -> CongressStateCodeDistrictBuilder {
+        CongressStateCodeDistrictBuilder::default()
     }
 }
 
-impl Endpoint for StateCodeDistrict {
+impl Endpoint for CongressStateCodeDistrict {
     fn method(&self) -> Method {
         Method::GET
     }
@@ -57,18 +59,15 @@ impl Endpoint for StateCodeDistrict {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::member::{congress::state_code_district::StateCodeDistrict, StateCode},
-        auth::Auth,
-        cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        StateCodeDistrict::builder()
+        CongressStateCodeDistrict::builder()
             .congress(118_u16)
-            .state_code(StateCode::MI)
+            .state_code(CongressionalStateCode::MI)
             .district(10_u16)
             .build()
             .unwrap();
@@ -81,9 +80,9 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = StateCodeDistrict::builder()
+        let endpoint = CongressStateCodeDistrict::builder()
             .congress(118_u16)
-            .state_code(StateCode::MI)
+            .state_code(CongressionalStateCode::MI)
             .district(10_u16)
             .build()
             .unwrap();

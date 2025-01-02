@@ -1,68 +1,37 @@
-use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use http::Method;
-use std::borrow::Cow;
-
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
+#![allow(clippy::module_inception)]
 
 mod bioguide_id;
 mod congress;
+mod congress_state_code_district;
+mod cosponsored_legislation;
+mod member;
+mod sponsored_legislation;
 mod state_code;
+mod state_code_district;
 
-/// Represents the /member endpoint.
-#[derive(Debug, Clone, Copy, Builder)]
-#[builder(setter(strip_option))]
-pub struct Member {
-    #[builder(default)]
-    format: Format,
-    #[builder(default)]
-    offset: Option<u32>,
-    #[builder(default)]
-    limit: Option<u8>,
-    #[builder(default)]
-    from_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    to_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    current_member: Option<bool>,
-}
-
-impl Member {
-    pub fn builder() -> MemberBuilder {
-        MemberBuilder::default()
-    }
-}
-
-impl Endpoint for Member {
-    fn method(&self) -> Method {
-        Method::GET
-    }
-
-    fn endpoint(&self) -> Cow<'static, str> {
-        "member".to_string().into()
-    }
-
-    fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params.push("format", self.format);
-        params.push_opt("offset", self.offset);
-        params.push_opt("limit", self.limit);
-        params.push_opt("from_date_time", self.from_date_time);
-        params.push_opt("to_date_time", self.to_date_time);
-        params.push_opt("current_member", self.current_member);
-
-        params
-    }
-}
+pub use self::bioguide_id::{BioguideId, BioguideIdBuilder, BioguideIdBuilderError};
+pub use self::congress::{Congress, CongressBuilder, CongressBuilderError};
+pub use self::congress_state_code_district::{
+    CongressStateCodeDistrict, CongressStateCodeDistrictBuilder,
+    CongressStateCodeDistrictBuilderError,
+};
+pub use self::cosponsored_legislation::{
+    CosponsoredLegislation, CosponsoredLegislationBuilder, CosponsoredLegislationBuilderError,
+};
+pub use self::member::{Member, MemberBuilder, MemberBuilderError};
+pub use self::sponsored_legislation::{
+    SponsoredLegislation, SponsoredLegislationBuilder, SponsoredLegislationBuilderError,
+};
+pub use self::state_code::{StateCode, StateCodeBuilder, StateCodeBuilderError};
+pub use self::state_code_district::{
+    StateCodeDistrict, StateCodeDistrictBuilder, StateCodeDistrictBuilderError,
+};
 
 /// The different possible state codes that can be used when querying
 /// and filtering Congressional member data. These match the two-digit
 /// postal codes for the 50 U.S. states and the District of Columbia.
 #[derive(Debug, Clone, Copy)]
-pub enum StateCode {
+pub enum CongressionalStateCode {
     AL,
     AK,
     AZ,
@@ -116,9 +85,9 @@ pub enum StateCode {
     WY,
 }
 
-impl StateCode {
+impl CongressionalStateCode {
     fn as_str(self) -> &'static str {
-        use StateCode::*;
+        use CongressionalStateCode::*;
         match self {
             AL => "AL",
             AK => "AK",
@@ -172,27 +141,5 @@ impl StateCode {
             WI => "WI",
             WY => "WY",
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{api::member::Member, auth::Auth, cdg::Cdg, query::Query};
-
-    #[test]
-    fn is_sufficient() {
-        Member::builder().build().unwrap();
-    }
-
-    #[tokio::test]
-    async fn endpoint() {
-        dotenvy::dotenv().unwrap();
-
-        let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
-        let client = Cdg::new(auth).unwrap();
-
-        let endpoint = Member::builder().build().unwrap();
-
-        let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
 }

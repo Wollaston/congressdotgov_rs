@@ -1,44 +1,51 @@
+use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
-
-/// Represents the /member/:stateCode/:district endpoint.
+/// Represents the /member endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct District {
-    #[builder(setter(into))]
-    state_code: crate::api::member::StateCode,
-    #[builder(setter(into))]
-    district: u16,
+pub struct Member {
     #[builder(default)]
     format: Format,
+    #[builder(default)]
+    offset: Option<u32>,
+    #[builder(default)]
+    limit: Option<u8>,
+    #[builder(default)]
+    from_date_time: Option<DateTime<Utc>>,
+    #[builder(default)]
+    to_date_time: Option<DateTime<Utc>>,
     #[builder(default)]
     current_member: Option<bool>,
 }
 
-impl District {
-    pub fn builder() -> DistrictBuilder {
-        DistrictBuilder::default()
+impl Member {
+    pub fn builder() -> MemberBuilder {
+        MemberBuilder::default()
     }
 }
 
-impl Endpoint for District {
+impl Endpoint for Member {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("member/{}/{}", self.state_code.as_str(), self.district).into()
+        "member".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
         params.push("format", self.format);
+        params.push_opt("offset", self.offset);
+        params.push_opt("limit", self.limit);
+        params.push_opt("from_date_time", self.from_date_time);
+        params.push_opt("to_date_time", self.to_date_time);
         params.push_opt("current_member", self.current_member);
 
         params
@@ -47,15 +54,13 @@ impl Endpoint for District {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::member::state_code::district::District, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        District::builder()
-            .state_code(crate::api::member::StateCode::MI)
-            .district(10_u16)
-            .build()
-            .unwrap();
+        Member::builder().build().unwrap();
     }
 
     #[tokio::test]
@@ -65,11 +70,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = District::builder()
-            .state_code(crate::api::member::StateCode::VA)
-            .district(10_u16)
-            .build()
-            .unwrap();
+        let endpoint = Member::builder().build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

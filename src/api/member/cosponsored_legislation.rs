@@ -2,14 +2,12 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
-
-/// Represents the /member/:bioguideId/sponsored-legislation endpoint.
+/// Represents the /member/:bioguideId/cosponsored-legislation endpoint.
 #[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
-pub struct SponsoredLegislation<'a> {
+pub struct CosponsoredLegislation<'a> {
     #[builder(setter(into))]
     bioguide_id: Cow<'a, str>,
     #[builder(default)]
@@ -20,13 +18,13 @@ pub struct SponsoredLegislation<'a> {
     limit: Option<u8>,
 }
 
-impl<'a> SponsoredLegislation<'a> {
-    pub fn builder() -> SponsoredLegislationBuilder<'a> {
-        SponsoredLegislationBuilder::default()
+impl<'a> CosponsoredLegislation<'a> {
+    pub fn builder() -> CosponsoredLegislationBuilder<'a> {
+        CosponsoredLegislationBuilder::default()
     }
 }
 
-impl Endpoint for SponsoredLegislation<'_> {
+impl Endpoint for CosponsoredLegislation<'_> {
     fn method(&self) -> Method {
         Method::GET
     }
@@ -48,14 +46,13 @@ impl Endpoint for SponsoredLegislation<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::member::bioguide_id::sponsored_legislation::SponsoredLegislation, auth::Auth,
-        cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        SponsoredLegislation::builder()
+        CosponsoredLegislation::builder()
             .bioguide_id("L000174")
             .build()
             .unwrap();
@@ -68,7 +65,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = SponsoredLegislation::builder()
+        let endpoint = CosponsoredLegislation::builder()
             .bioguide_id("L000174")
             .build()
             .unwrap();
