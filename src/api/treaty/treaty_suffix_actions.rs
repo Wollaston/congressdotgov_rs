@@ -6,14 +6,16 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-/// Represents the /treaty/:congress/:treatyNumber/:treatySuffix/committees endpoint.
-#[derive(Debug, Clone, Copy, Builder)]
+/// Represents the /treaty/:congress/:treatyNumber/:treatySuffix/actions endpoint.
+#[derive(Debug, Clone, Builder)]
 #[builder(setter(strip_option))]
-pub struct Committees {
+pub struct TreatySuffixActions<'a> {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
     treaty_number: u32,
+    #[builder(setter(into))]
+    treaty_suffix: Cow<'a, str>,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -22,19 +24,23 @@ pub struct Committees {
     limit: Option<u8>,
 }
 
-impl Committees {
-    pub fn builder() -> CommitteesBuilder {
-        CommitteesBuilder::default()
+impl<'a> TreatySuffixActions<'a> {
+    pub fn builder() -> TreatySuffixActionsBuilder<'a> {
+        TreatySuffixActionsBuilder::default()
     }
 }
 
-impl Endpoint for Committees {
+impl Endpoint for TreatySuffixActions<'_> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("treaty/{}/{}/committees", self.congress, self.treaty_number).into()
+        format!(
+            "treaty/{}/{}/{}/actions",
+            self.congress, self.treaty_number, self.treaty_suffix
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -50,16 +56,16 @@ impl Endpoint for Committees {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::treaty::congress::treaty_number::committees::Committees, auth::Auth, cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Committees::builder()
-            .congress(117_u8)
-            .treaty_number(3_u32)
+        TreatySuffixActions::builder()
+            .congress(114_u8)
+            .treaty_number(13_u32)
+            .treaty_suffix("A")
             .build()
             .unwrap();
     }
@@ -71,9 +77,10 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Committees::builder()
-            .congress(117_u8)
-            .treaty_number(3_u32)
+        let endpoint = TreatySuffixActions::builder()
+            .congress(114_u8)
+            .treaty_number(13_u32)
+            .treaty_suffix("A")
             .build()
             .unwrap();
 

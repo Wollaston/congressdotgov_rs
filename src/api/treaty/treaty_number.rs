@@ -6,10 +6,6 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-mod actions;
-mod committees;
-mod treaty_suffix;
-
 /// Represents the /treaty/:congress/:treatyNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
@@ -48,9 +44,9 @@ impl Endpoint for TreatyNumber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::treaty::congress::treaty_number::TreatyNumber, auth::Auth, cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {

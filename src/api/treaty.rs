@@ -1,76 +1,39 @@
-use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use http::Method;
-use std::borrow::Cow;
-
-use crate::{endpoint::Endpoint, params::QueryParams};
+#![allow(clippy::module_inception)]
 
 use super::Format;
 
+mod committees;
 mod congress;
+mod treaty;
+mod treaty_number;
+mod treaty_number_actions;
+mod treaty_suffix;
+mod treaty_suffix_actions;
 
-/// Represents the /treaty endpoint.
-#[derive(Debug, Clone, Copy, Builder)]
-#[builder(setter(strip_option))]
-pub struct Treaty {
-    #[builder(default)]
-    format: Format,
-    #[builder(default)]
-    offset: Option<u32>,
-    #[builder(default)]
-    limit: Option<u8>,
-    #[builder(default)]
-    from_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    to_date_time: Option<DateTime<Utc>>,
-}
+pub use self::committees::Committees;
+pub use self::committees::CommitteesBuilder;
+pub use self::committees::CommitteesBuilderError;
 
-impl Treaty {
-    pub fn builder() -> TreatyBuilder {
-        TreatyBuilder::default()
-    }
-}
+pub use self::congress::Congress;
+pub use self::congress::CongressBuilder;
+pub use self::congress::CongressBuilderError;
 
-impl Endpoint for Treaty {
-    fn method(&self) -> Method {
-        Method::GET
-    }
+pub use self::treaty::Treaty;
+pub use self::treaty::TreatyBuilder;
+pub use self::treaty::TreatyBuilderError;
 
-    fn endpoint(&self) -> Cow<'static, str> {
-        "treaty".to_string().into()
-    }
+pub use self::treaty_number::TreatyNumber;
+pub use self::treaty_number::TreatyNumberBuilder;
+pub use self::treaty_number::TreatyNumberBuilderError;
 
-    fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
+pub use self::treaty_number_actions::TreatyNumberActions;
+pub use self::treaty_number_actions::TreatyNumberActionsBuilder;
+pub use self::treaty_number_actions::TreatyNumberActionsBuilderError;
 
-        params.push("format", self.format);
-        params.push_opt("offset", self.offset);
-        params.push_opt("limit", self.limit);
-        params.push_opt("from_date_time", self.from_date_time);
-        params.push_opt("to_date_time", self.to_date_time);
+pub use self::treaty_suffix::TreatySuffix;
+pub use self::treaty_suffix::TreatySuffixBuilder;
+pub use self::treaty_suffix::TreatySuffixBuilderError;
 
-        params
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{api::treaty::Treaty, auth::Auth, cdg::Cdg, query::Query};
-
-    #[test]
-    fn is_sufficient() {
-        Treaty::builder().build().unwrap();
-    }
-
-    #[tokio::test]
-    async fn endpoint() {
-        dotenvy::dotenv().unwrap();
-
-        let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
-        let client = Cdg::new(auth).unwrap();
-
-        let endpoint = Treaty::builder().build().unwrap();
-
-        let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
-    }
-}
+pub use self::treaty_suffix_actions::TreatySuffixActions;
+pub use self::treaty_suffix_actions::TreatySuffixActionsBuilder;
+pub use self::treaty_suffix_actions::TreatySuffixActionsBuilderError;

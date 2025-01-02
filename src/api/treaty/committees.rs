@@ -6,16 +6,14 @@ use crate::{endpoint::Endpoint, params::QueryParams};
 
 use super::Format;
 
-/// Represents the /treaty/:congress/:treatyNumber/:treatySuffix/actions endpoint.
-#[derive(Debug, Clone, Builder)]
+/// Represents the /treaty/:congress/:treatyNumber/:treatySuffix/committees endpoint.
+#[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Actions<'a> {
+pub struct Committees {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
     treaty_number: u32,
-    #[builder(setter(into))]
-    treaty_suffix: Cow<'a, str>,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -24,23 +22,19 @@ pub struct Actions<'a> {
     limit: Option<u8>,
 }
 
-impl<'a> Actions<'a> {
-    pub fn builder() -> ActionsBuilder<'a> {
-        ActionsBuilder::default()
+impl Committees {
+    pub fn builder() -> CommitteesBuilder {
+        CommitteesBuilder::default()
     }
 }
 
-impl Endpoint for Actions<'_> {
+impl Endpoint for Committees {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!(
-            "treaty/{}/{}/{}/actions",
-            self.congress, self.treaty_number, self.treaty_suffix
-        )
-        .into()
+        format!("treaty/{}/{}/committees", self.congress, self.treaty_number).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -56,17 +50,15 @@ impl Endpoint for Actions<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::treaty::congress::treaty_number::treaty_suffix::actions::Actions, auth::Auth,
-        cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Actions::builder()
-            .congress(114_u8)
-            .treaty_number(13_u32)
-            .treaty_suffix("A")
+        Committees::builder()
+            .congress(117_u8)
+            .treaty_number(3_u32)
             .build()
             .unwrap();
     }
@@ -78,10 +70,9 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Actions::builder()
-            .congress(114_u8)
-            .treaty_number(13_u32)
-            .treaty_suffix("A")
+        let endpoint = Committees::builder()
+            .congress(117_u8)
+            .treaty_number(3_u32)
             .build()
             .unwrap();
 
