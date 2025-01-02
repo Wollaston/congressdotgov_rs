@@ -40,6 +40,7 @@ pub mod committee;
 pub mod committee_meeting;
 pub mod committee_print;
 pub mod committee_report;
+pub mod congress;
 pub mod congressional_record;
 pub mod daily_congressional_record;
 pub mod error;
