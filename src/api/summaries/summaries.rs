@@ -3,18 +3,16 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{
+    api::{Format, Sort},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
-use super::{Format, Sort};
-
-/// Represents the /summaries/:congress/:billType endpoint.
+/// Represents the /summaries endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct BillType {
-    #[builder(setter(into))]
-    congress: u16,
-    #[builder(setter(into))]
-    bill_type: crate::api::BillType,
+pub struct Summaries {
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -29,19 +27,19 @@ pub struct BillType {
     sort: Option<Sort>,
 }
 
-impl BillType {
-    pub fn builder() -> BillTypeBuilder {
-        BillTypeBuilder::default()
+impl Summaries {
+    pub fn builder() -> SummariesBuilder {
+        SummariesBuilder::default()
     }
 }
 
-impl Endpoint for BillType {
+impl Endpoint for Summaries {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("summaries/{}/{}", self.congress, self.bill_type.as_str()).into()
+        "summaries".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -60,17 +58,13 @@ impl Endpoint for BillType {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::summaries::congress::bill_type::BillType, auth::Auth, cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        BillType::builder()
-            .congress(118_u16)
-            .bill_type(crate::api::BillType::Hr)
-            .build()
-            .unwrap();
+        Summaries::builder().build().unwrap();
     }
 
     #[tokio::test]
@@ -80,11 +74,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = BillType::builder()
-            .congress(118_u16)
-            .bill_type(crate::api::BillType::Hr)
-            .build()
-            .unwrap();
+        let endpoint = Summaries::builder().build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
