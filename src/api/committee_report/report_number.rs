@@ -2,17 +2,14 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{
-    api::committee_report::congress::report_type::CommitteeReportType, endpoint::Endpoint,
-    params::QueryParams,
-};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
+use super::CommitteeReportType;
 
-/// Represents the /committee-report/:congress/:reportType/:reportNumber/text endpoint.
+/// Represents the /committee-report/:congress/:reportType/:reportNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Text {
+pub struct ReportNumber {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
@@ -21,26 +18,22 @@ pub struct Text {
     report_number: u32,
     #[builder(default)]
     format: Format,
-    #[builder(default)]
-    offset: Option<u32>,
-    #[builder(default)]
-    limit: Option<u8>,
 }
 
-impl Text {
-    pub fn builder() -> TextBuilder {
-        TextBuilder::default()
+impl ReportNumber {
+    pub fn builder() -> ReportNumberBuilder {
+        ReportNumberBuilder::default()
     }
 }
 
-impl Endpoint for Text {
+impl Endpoint for ReportNumber {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "committee-report/{}/{}/{}/text",
+            "committee-report/{}/{}/{}",
             self.congress,
             self.report_type.as_str(),
             self.report_number
@@ -52,8 +45,6 @@ impl Endpoint for Text {
         let mut params = QueryParams::default();
 
         params.push("format", self.format);
-        params.push_opt("offset", self.offset);
-        params.push_opt("limit", self.limit);
 
         params
     }
@@ -61,18 +52,13 @@ impl Endpoint for Text {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::committee_report::congress::{
-            report_type::report_number::text::Text, report_type::CommitteeReportType,
-        },
-        auth::Auth,
-        cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Text::builder()
+        ReportNumber::builder()
             .congress(118_u16)
             .report_type(CommitteeReportType::Hrpt)
             .report_number(617_u32)
@@ -87,7 +73,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Text::builder()
+        let endpoint = ReportNumber::builder()
             .congress(118_u16)
             .report_type(CommitteeReportType::Hrpt)
             .report_number(617_u32)

@@ -1,52 +1,46 @@
-use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
+use super::CommitteeReportType;
 
-mod report_number;
-
-/// Represents the /committee-report/:congress/:reportType endpoint.
+/// Represents the /committee-report/:congress/:reportType/:reportNumber/text endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct ReportType {
+pub struct Text {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
     report_type: CommitteeReportType,
+    #[builder(setter(into))]
+    report_number: u32,
     #[builder(default)]
     format: Format,
-    #[builder(default)]
-    conference: Option<bool>,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
     limit: Option<u8>,
-    #[builder(default)]
-    from_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    to_date_time: Option<DateTime<Utc>>,
 }
 
-impl ReportType {
-    pub fn builder() -> ReportTypeBuilder {
-        ReportTypeBuilder::default()
+impl Text {
+    pub fn builder() -> TextBuilder {
+        TextBuilder::default()
     }
 }
 
-impl Endpoint for ReportType {
+impl Endpoint for Text {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "committee-report/{}/{}",
+            "committee-report/{}/{}/{}/text",
             self.congress,
-            self.report_type.as_str()
+            self.report_type.as_str(),
+            self.report_number
         )
         .into()
     }
@@ -55,47 +49,25 @@ impl Endpoint for ReportType {
         let mut params = QueryParams::default();
 
         params.push("format", self.format);
-        params.push_opt("conference", self.conference);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
-        params.push_opt("from_date_time", self.from_date_time);
-        params.push_opt("to_date_time", self.to_date_time);
 
         params
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CommitteeReportType {
-    Hrpt,
-    Srpt,
-    Erpt,
-}
-
-impl CommitteeReportType {
-    fn as_str(self) -> &'static str {
-        match self {
-            CommitteeReportType::Hrpt => "hrpt",
-            CommitteeReportType::Srpt => "srpt",
-            CommitteeReportType::Erpt => "erpt",
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::committee_report::congress::report_type::ReportType, auth::Auth, cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
 
-    use super::CommitteeReportType;
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        ReportType::builder()
+        Text::builder()
             .congress(118_u16)
             .report_type(CommitteeReportType::Hrpt)
+            .report_number(617_u32)
             .build()
             .unwrap();
     }
@@ -107,9 +79,10 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = ReportType::builder()
+        let endpoint = Text::builder()
             .congress(118_u16)
             .report_type(CommitteeReportType::Hrpt)
+            .report_number(617_u32)
             .build()
             .unwrap();
 
