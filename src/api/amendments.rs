@@ -1,76 +1,42 @@
-use chrono::{DateTime, Utc};
-use derive_builder::Builder;
-use http::Method;
-use std::borrow::Cow;
+#![allow(clippy::module_inception)]
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
-
+mod actions;
+mod amendment;
+mod amendment_number;
+mod amendment_type;
+mod amendments;
 mod congress;
+mod cosponsors;
+mod text;
 
-/// Represents the /amendment endpoint.
-#[derive(Debug, Clone, Copy, Builder)]
-#[builder(setter(strip_option))]
-pub struct Amendment {
-    #[builder(default)]
-    format: Format,
-    #[builder(default)]
-    offset: Option<u32>,
-    #[builder(default)]
-    limit: Option<u8>,
-    #[builder(default)]
-    from_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    to_date_time: Option<DateTime<Utc>>,
+pub use self::actions::{Actions, ActionsBuilder, ActionsBuilderError};
+pub use self::amendment::{Amendment, AmendmentBuilder, AmendmentBuilderError};
+pub use self::amendment_number::{
+    AmendmentNumber, AmendmentNumberBuilder, AmendmentNumberBuilderError,
+};
+pub use self::amendment_type::{AmendmentType, AmendmentTypeBuilder, AmendmentTypeBuilderError};
+pub use self::amendments::{Amendments, AmendmentsBuilder, AmendmentsBuilderError};
+pub use self::congress::{Congress, CongressBuilder, CongressBuilderError};
+pub use self::cosponsors::{Cosponsors, CosponsorsBuilder, CosponsorsBuilderError};
+pub use self::text::{Text, TextBuilder, TextBuilderError};
+
+/// The possible Amendment Types in Congress.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CongressionalAmendmentType {
+    /// H.Amdt. - House amendment. Amends a House bill.
+    Hamdt,
+    /// S.Amdt. - Senate amendment. Amends a Senate bill.
+    Samdt,
+    /// Only available for the 97th and 98th Congresses.
+    Suamdt,
 }
 
-impl Amendment {
-    pub fn builder() -> AmendmentBuilder {
-        AmendmentBuilder::default()
-    }
-}
-
-impl Endpoint for Amendment {
-    fn method(&self) -> Method {
-        Method::GET
-    }
-
-    fn endpoint(&self) -> Cow<'static, str> {
-        "amendment".into()
-    }
-
-    fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params.push("format", self.format);
-        params.push_opt("offset", self.offset);
-        params.push_opt("limit", self.limit);
-        params.push_opt("from_date_time", self.from_date_time);
-        params.push_opt("to_date_time", self.to_date_time);
-
-        params
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{api::amendments::Amendment, auth::Auth, cdg::Cdg, query::Query};
-
-    #[test]
-    fn bll_is_sufficient() {
-        Amendment::builder().build().unwrap();
-    }
-
-    #[tokio::test]
-    async fn endpoint() {
-        dotenvy::dotenv().unwrap();
-
-        let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
-        let client = Cdg::new(auth).unwrap();
-
-        let endpoint = Amendment::builder().build().unwrap();
-
-        let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
+impl CongressionalAmendmentType {
+    fn as_str(self) -> &'static str {
+        match self {
+            CongressionalAmendmentType::Hamdt => "hamdt",
+            CongressionalAmendmentType::Samdt => "samdt",
+            CongressionalAmendmentType::Suamdt => "suamdt",
+        }
     }
 }

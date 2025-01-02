@@ -1,46 +1,48 @@
+use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::{CongressionalAmendmentType, Format};
+use super::CongressionalAmendmentType;
 
-/// Represents the /amendment/:congress/:amendmentType/:amendmentNumber/text endpoint.
+/// Represents the /amendment/:congress/:amendmentType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Text {
+pub struct AmendmentType {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
     amendment_type: CongressionalAmendmentType,
-    #[builder(setter(into))]
-    amendment_number: u32,
     #[builder(default)]
     format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
     limit: Option<u8>,
+    #[builder(default)]
+    from_date_time: Option<DateTime<Utc>>,
+    #[builder(default)]
+    to_date_time: Option<DateTime<Utc>>,
 }
 
-impl Text {
-    pub fn builder() -> TextBuilder {
-        TextBuilder::default()
+impl AmendmentType {
+    pub fn builder() -> AmendmentTypeBuilder {
+        AmendmentTypeBuilder::default()
     }
 }
 
-impl Endpoint for Text {
+impl Endpoint for AmendmentType {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "amendment/{}/{}/{}/text",
+            "amendment/{}/{}",
             self.congress,
-            self.amendment_type.as_str(),
-            self.amendment_number
+            self.amendment_type.as_str()
         )
         .into()
     }
@@ -51,6 +53,8 @@ impl Endpoint for Text {
         params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
+        params.push_opt("from_date_time", self.from_date_time);
+        params.push_opt("to_date_time", self.to_date_time);
 
         params
     }
@@ -58,19 +62,15 @@ impl Endpoint for Text {
 
 #[cfg(test)]
 mod tests {
-    use super::CongressionalAmendmentType;
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
 
-    use crate::{
-        api::amendments::congress::amendment_type::amendment_number::text::Text, auth::Auth,
-        cdg::Cdg, query::Query,
-    };
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Text::builder()
+        AmendmentType::builder()
             .congress(117_u8)
-            .amendment_type(CongressionalAmendmentType::Samdt)
-            .amendment_number(2137_u32)
+            .amendment_type(CongressionalAmendmentType::Suamdt)
             .build()
             .unwrap();
     }
@@ -82,10 +82,9 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Text::builder()
+        let endpoint = AmendmentType::builder()
             .congress(117_u8)
-            .amendment_type(CongressionalAmendmentType::Samdt)
-            .amendment_number(2137_u32)
+            .amendment_type(CongressionalAmendmentType::Suamdt)
             .build()
             .unwrap();
 

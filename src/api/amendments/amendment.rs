@@ -5,12 +5,10 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-/// Represents the /amendment/:congress endpoint.
+/// Represents the /amendment endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Congress {
-    #[builder(setter(into))]
-    congress: u8,
+pub struct Amendment {
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -23,19 +21,19 @@ pub struct Congress {
     to_date_time: Option<DateTime<Utc>>,
 }
 
-impl Congress {
-    pub fn builder() -> CongressBuilder {
-        CongressBuilder::default()
+impl Amendment {
+    pub fn builder() -> AmendmentBuilder {
+        AmendmentBuilder::default()
     }
 }
 
-impl Endpoint for Congress {
+impl Endpoint for Amendment {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("amendment/{}", self.congress).into()
+        "amendment".into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -58,8 +56,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn is_sufficient() {
-        Congress::builder().congress(117_u8).build().unwrap();
+    fn bll_is_sufficient() {
+        Amendment::builder().build().unwrap();
     }
 
     #[tokio::test]
@@ -69,7 +67,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Congress::builder().congress(117_u8).build().unwrap();
+        let endpoint = Amendment::builder().build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

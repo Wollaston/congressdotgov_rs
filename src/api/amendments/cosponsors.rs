@@ -2,19 +2,14 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::{CongressionalAmendmentType, Format};
+use super::CongressionalAmendmentType;
 
-mod actions;
-mod amendments;
-mod cosponsors;
-mod text;
-
-/// Represents the /amendment/:congress/:amendmentType/:amendmentNumber endpoint.
+/// Represents the /amendment/:congress/:amendmentType/:amendmentNumber/cosponsors endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct AmendmentNumber {
+pub struct Cosponsors {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
@@ -23,22 +18,26 @@ pub struct AmendmentNumber {
     amendment_number: u32,
     #[builder(default)]
     format: Format,
+    #[builder(default)]
+    offset: Option<u32>,
+    #[builder(default)]
+    limit: Option<u8>,
 }
 
-impl AmendmentNumber {
-    pub fn builder() -> AmendmentNumberBuilder {
-        AmendmentNumberBuilder::default()
+impl Cosponsors {
+    pub fn builder() -> CosponsorsBuilder {
+        CosponsorsBuilder::default()
     }
 }
 
-impl Endpoint for AmendmentNumber {
+impl Endpoint for Cosponsors {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "amendment/{}/{}/{}",
+            "amendment/{}/{}/{}/cosponsors",
             self.congress,
             self.amendment_type.as_str(),
             self.amendment_number
@@ -50,6 +49,8 @@ impl Endpoint for AmendmentNumber {
         let mut params = QueryParams::default();
 
         params.push("format", self.format);
+        params.push_opt("offset", self.offset);
+        params.push_opt("limit", self.limit);
 
         params
     }
@@ -57,16 +58,13 @@ impl Endpoint for AmendmentNumber {
 
 #[cfg(test)]
 mod tests {
-    use super::CongressionalAmendmentType;
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
 
-    use crate::{
-        api::amendments::congress::amendment_type::amendment_number::AmendmentNumber, auth::Auth,
-        cdg::Cdg, query::Query,
-    };
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        AmendmentNumber::builder()
+        Cosponsors::builder()
             .congress(117_u8)
             .amendment_type(CongressionalAmendmentType::Samdt)
             .amendment_number(2137_u32)
@@ -81,7 +79,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = AmendmentNumber::builder()
+        let endpoint = Cosponsors::builder()
             .congress(117_u8)
             .amendment_type(CongressionalAmendmentType::Samdt)
             .amendment_number(2137_u32)

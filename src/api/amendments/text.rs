@@ -2,14 +2,14 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::{CongressionalAmendmentType, Format};
+use super::CongressionalAmendmentType;
 
-/// Represents the /amendment/:congress/:amendmentType/:amendmentNumber/actions endpoint.
+/// Represents the /amendment/:congress/:amendmentType/:amendmentNumber/text endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Actions {
+pub struct Text {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
@@ -24,20 +24,20 @@ pub struct Actions {
     limit: Option<u8>,
 }
 
-impl Actions {
-    pub fn builder() -> ActionsBuilder {
-        ActionsBuilder::default()
+impl Text {
+    pub fn builder() -> TextBuilder {
+        TextBuilder::default()
     }
 }
 
-impl Endpoint for Actions {
+impl Endpoint for Text {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "amendment/{}/{}/{}/actions",
+            "amendment/{}/{}/{}/text",
             self.congress,
             self.amendment_type.as_str(),
             self.amendment_number
@@ -58,16 +58,13 @@ impl Endpoint for Actions {
 
 #[cfg(test)]
 mod tests {
-    use super::CongressionalAmendmentType;
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
 
-    use crate::{
-        api::amendments::congress::amendment_type::amendment_number::actions::Actions, auth::Auth,
-        cdg::Cdg, query::Query,
-    };
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Actions::builder()
+        Text::builder()
             .congress(117_u8)
             .amendment_type(CongressionalAmendmentType::Samdt)
             .amendment_number(2137_u32)
@@ -82,7 +79,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Actions::builder()
+        let endpoint = Text::builder()
             .congress(117_u8)
             .amendment_type(CongressionalAmendmentType::Samdt)
             .amendment_number(2137_u32)

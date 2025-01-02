@@ -1,41 +1,48 @@
-use chrono::{DateTime, Utc};
 use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-/// Represents the /amendment/:congress endpoint.
+use super::CongressionalAmendmentType;
+
+/// Represents the /amendment/:congress/:amendmentType/:amendmentNumber/actions endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Congress {
+pub struct Actions {
     #[builder(setter(into))]
     congress: u8,
+    #[builder(setter(into))]
+    amendment_type: CongressionalAmendmentType,
+    #[builder(setter(into))]
+    amendment_number: u32,
     #[builder(default)]
     format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
     limit: Option<u8>,
-    #[builder(default)]
-    from_date_time: Option<DateTime<Utc>>,
-    #[builder(default)]
-    to_date_time: Option<DateTime<Utc>>,
 }
 
-impl Congress {
-    pub fn builder() -> CongressBuilder {
-        CongressBuilder::default()
+impl Actions {
+    pub fn builder() -> ActionsBuilder {
+        ActionsBuilder::default()
     }
 }
 
-impl Endpoint for Congress {
+impl Endpoint for Actions {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("amendment/{}", self.congress).into()
+        format!(
+            "amendment/{}/{}/{}/actions",
+            self.congress,
+            self.amendment_type.as_str(),
+            self.amendment_number
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -44,8 +51,6 @@ impl Endpoint for Congress {
         params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
-        params.push_opt("from_date_time", self.from_date_time);
-        params.push_opt("to_date_time", self.to_date_time);
 
         params
     }
@@ -59,7 +64,12 @@ mod tests {
 
     #[test]
     fn is_sufficient() {
-        Congress::builder().congress(117_u8).build().unwrap();
+        Actions::builder()
+            .congress(117_u8)
+            .amendment_type(CongressionalAmendmentType::Samdt)
+            .amendment_number(2137_u32)
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -69,7 +79,12 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Congress::builder().congress(117_u8).build().unwrap();
+        let endpoint = Actions::builder()
+            .congress(117_u8)
+            .amendment_type(CongressionalAmendmentType::Samdt)
+            .amendment_number(2137_u32)
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

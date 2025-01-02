@@ -2,9 +2,9 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::{CongressionalAmendmentType, Format};
+use super::CongressionalAmendmentType;
 
 /// Represents the /amendment/:congress/:amendmentType/:amendmentNumber/amendments endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -58,12 +58,9 @@ impl Endpoint for Amendments {
 
 #[cfg(test)]
 mod tests {
-    use super::CongressionalAmendmentType;
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
 
-    use crate::{
-        api::amendments::congress::amendment_type::amendment_number::amendments::Amendments,
-        auth::Auth, cdg::Cdg, query::Query,
-    };
+    use super::*;
 
     #[test]
     fn is_sufficient() {
