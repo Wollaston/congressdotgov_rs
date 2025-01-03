@@ -46,7 +46,10 @@ mod tests {
 
     #[test]
     fn bll_is_sufficient() {
-        SpecificCongress::builder().build().unwrap();
+        SpecificCongress::builder()
+            .congress(117_u8)
+            .build()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -56,7 +59,10 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = SpecificCongress::builder().build().unwrap();
+        let endpoint = SpecificCongress::builder()
+            .congress(117_u8)
+            .build()
+            .unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
