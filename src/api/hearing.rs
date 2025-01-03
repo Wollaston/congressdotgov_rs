@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Hearing API endpoints.
+
 mod chamber;
 mod congress;
 mod hearing;

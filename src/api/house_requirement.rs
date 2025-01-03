@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! House-requirement API endpoints.
+
 mod house_requirement;
 mod matching_communications;
 mod requirement_number;

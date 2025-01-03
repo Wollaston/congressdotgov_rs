@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Daily-congressional-record API endpoints.
+
 mod articles;
 mod daily_congressional_record;
 mod issue_number;

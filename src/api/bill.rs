@@ -1,6 +1,6 @@
 #![allow(clippy::module_inception)]
 
-//! Bill API endpoints and types.
+//! Bill API endpoints.
 
 mod actions;
 mod amendments;

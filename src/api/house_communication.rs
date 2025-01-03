@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! House-communication API endpoints and types.
+
 mod communication_number;
 mod communication_type;
 mod congress;

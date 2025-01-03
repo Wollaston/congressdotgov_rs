@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Nomination API endpoints.
+
 mod actions;
 mod committees;
 mod congress;

@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Member API endpoints and types.
+
 mod bioguide_id;
 mod congress;
 mod congress_state_code_district;

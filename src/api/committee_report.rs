@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Committee-report API endpoints and types.
+
 mod committee_report;
 mod congress;
 mod report_number;

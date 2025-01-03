@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Congress API endpoints and types.
+
 mod congress;
 mod current_congress;
 mod specific_congress;

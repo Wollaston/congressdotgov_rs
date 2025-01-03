@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Amendments API endpoints and types.
+
 mod actions;
 mod amendment;
 mod amendment_number;

@@ -1,6 +1,6 @@
 #![allow(clippy::module_inception)]
 
-use super::Format;
+//! Treaty API endpoints.
 
 mod committees;
 mod congress;

@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Summaries API endpoints.
+
 mod bill_type;
 mod congress;
 mod summaries;

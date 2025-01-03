@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Committee API endpoints and types.
+
 mod bills;
 mod chamber;
 mod chamber_by_congress;

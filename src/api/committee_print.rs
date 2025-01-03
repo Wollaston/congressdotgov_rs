@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Committee-print API endpoints.
+
 mod chamber;
 mod committee_print;
 mod congress;
