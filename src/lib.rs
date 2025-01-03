@@ -13,4 +13,5 @@ pub mod api;
 mod auth;
 mod cdg;
 
+pub use crate::auth::Auth;
 pub use crate::cdg::{Cdg, CdgError};

@@ -13,6 +13,8 @@
 //! use congressdotgov_rs::Cdg;
 //! use congressdotgov_rs::api::{self, Query};
 //! use congressdotgov_rs::api::bill::Congress;
+//! use congressdotgov_rs::Auth;
+//! use tokio_test::block_on;
 //!
 //! // The return type of a `Bill`. Note that Cdg may contain more information, but you can
 //! // define your structure to only fetch what is needed.
@@ -22,13 +24,15 @@
 //! }
 //!
 //! // Create the client.
-//! let auth = Auth::Token("API_KEY".into()).unwrap();
+//! let auth = Auth::Token("API_KEY".into());
 //! let client = Cdg::new(auth).unwrap();
 //!
 //! // Create a simple endpoint. This one gets recent Bills from the 118th Congress.
 //! let endpoint = Congress::builder().congress(118_u8).build().unwrap();
 //! // Call the endpoint. The return type decides how to represent the value.
-//! let bills: Vec<Bill> = endpoint.query(&client).unwrap();
+//! # tokio_test::block_on(async {
+//! let bills: Vec<Bill> = endpoint.query(&client).await.unwrap();
+//! # })
 //! ```
 
 use std::borrow::Cow;
