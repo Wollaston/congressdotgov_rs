@@ -1,69 +1,43 @@
-use derive_builder::Builder;
-use http::Method;
-use std::borrow::Cow;
+#![allow(clippy::module_inception)]
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
-
+mod communication_number;
+mod communication_type;
 mod congress;
+mod house_communication;
 
-/// Represents the /house-communication endpoint.
-#[derive(Debug, Clone, Copy, Builder)]
-#[builder(setter(strip_option))]
-pub struct HouseCommunication {
-    #[builder(default)]
-    format: Format,
-    #[builder(default)]
-    offset: Option<u32>,
-    #[builder(default)]
-    limit: Option<u8>,
+/// The possible communication types in the House of Representatives
+/// available via the congress.gov API. R – Requirements also exists,
+/// but it is not an option with the API.
+#[derive(Debug, Clone, Copy)]
+pub enum HouseCommunicationType {
+    /// Executive Communications
+    Ec,
+    /// Memorials
+    Ml,
+    /// Presidential Messages
+    Pm,
+    /// Petitions
+    Pt,
 }
 
-impl HouseCommunication {
-    pub fn builder() -> HouseCommunicationBuilder {
-        HouseCommunicationBuilder::default()
-    }
-}
-
-impl Endpoint for HouseCommunication {
-    fn method(&self) -> Method {
-        Method::GET
-    }
-
-    fn endpoint(&self) -> Cow<'static, str> {
-        "house-communication".to_string().into()
-    }
-
-    fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params.push("format", self.format);
-        params.push_opt("offset", self.offset);
-        params.push_opt("limit", self.limit);
-
-        params
+impl HouseCommunicationType {
+    fn as_str(self) -> &'static str {
+        match self {
+            HouseCommunicationType::Ec => "ec",
+            HouseCommunicationType::Ml => "ml",
+            HouseCommunicationType::Pm => "pm",
+            HouseCommunicationType::Pt => "pt",
+        }
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::{api::house_communication::HouseCommunication, auth::Auth, cdg::Cdg, query::Query};
-
-    #[test]
-    fn is_sufficient() {
-        HouseCommunication::builder().build().unwrap();
-    }
-
-    #[tokio::test]
-    async fn endpoint() {
-        dotenvy::dotenv().unwrap();
-
-        let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
-        let client = Cdg::new(auth).unwrap();
-
-        let endpoint = HouseCommunication::builder().build().unwrap();
-
-        let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
-    }
-}
+pub use self::communication_number::{
+    CommunicationNumber, CommunicationNumberBuilder, CommunicationNumberBuilderError,
+};
+pub use self::communication_type::{
+    CommunicationType, CommunicationTypeBuilder, CommunicationTypeBuilderError,
+};
+pub use self::congress::{Congress, CongressBuilder, CongressBuilderError};
+pub use self::house_communication::{
+    HouseCommunication, HouseCommunicationBuilder, HouseCommunicationBuilderError,
+};

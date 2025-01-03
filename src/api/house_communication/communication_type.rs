@@ -2,11 +2,9 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
-
-mod communication_number;
+use super::HouseCommunicationType;
 
 /// Represents the /house-communication/:congress/:communicationType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -54,41 +52,11 @@ impl Endpoint for CommunicationType {
         params
     }
 }
-
-/// The possible communication types in the House of Representatives
-/// available via the congress.gov API. R – Requirements also exists,
-/// but it is not an option with the API.
-#[derive(Debug, Clone, Copy)]
-pub enum HouseCommunicationType {
-    /// Executive Communications
-    Ec,
-    /// Memorials
-    Ml,
-    /// Presidential Messages
-    Pm,
-    /// Petitions
-    Pt,
-}
-
-impl HouseCommunicationType {
-    fn as_str(self) -> &'static str {
-        match self {
-            HouseCommunicationType::Ec => "ec",
-            HouseCommunicationType::Ml => "ml",
-            HouseCommunicationType::Pm => "pm",
-            HouseCommunicationType::Pt => "pt",
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::house_communication::congress::communication_type::CommunicationType, auth::Auth,
-        cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
 
-    use super::HouseCommunicationType;
+    use super::*;
 
     #[test]
     fn is_sufficient() {
