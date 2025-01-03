@@ -4,12 +4,10 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-/// Represents the /senate-communication/:congress endpoint.
+/// Represents the /senate-communication endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Congress {
-    #[builder(default)]
-    congress: u8,
+pub struct SenateCommunication {
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -18,19 +16,19 @@ pub struct Congress {
     limit: Option<u8>,
 }
 
-impl Congress {
-    pub fn builder() -> CongressBuilder {
-        CongressBuilder::default()
+impl SenateCommunication {
+    pub fn builder() -> SenateCommunicationBuilder {
+        SenateCommunicationBuilder::default()
     }
 }
 
-impl Endpoint for Congress {
+impl Endpoint for SenateCommunication {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("senate-communication/{}", self.congress).into()
+        "senate-communication".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -46,13 +44,13 @@ impl Endpoint for Congress {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::senate_communication::congress::Congress, auth::Auth, cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Congress::builder().congress(117_u8).build().unwrap();
+        SenateCommunication::builder().build().unwrap();
     }
 
     #[tokio::test]
@@ -62,7 +60,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Congress::builder().congress(117_u8).build().unwrap();
+        let endpoint = SenateCommunication::builder().build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

@@ -1,71 +1,38 @@
-use derive_builder::Builder;
-use http::Method;
-use std::borrow::Cow;
+#![allow(clippy::module_inception)]
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
-
+mod communication_number;
+mod communication_type;
 mod congress;
+mod senate_communication;
 
-/// Represents the /senate-communication endpoint.
-#[derive(Debug, Clone, Copy, Builder)]
-#[builder(setter(strip_option))]
-pub struct SenateCommunication {
-    #[builder(default)]
-    format: Format,
-    #[builder(default)]
-    offset: Option<u32>,
-    #[builder(default)]
-    limit: Option<u8>,
+pub use self::communication_number::{
+    CommunicationNumber, CommunicationNumberBuilder, CommunicationNumberBuilderError,
+};
+pub use self::communication_type::{
+    CommunicationType, CommunicationTypeBuilder, CommunicationTypeBuilderError,
+};
+pub use self::congress::{Congress, CongressBuilder, CongressBuilderError};
+pub use self::senate_communication::{
+    SenateCommunication, SenateCommunicationBuilder, SenateCommunicationBuilderError,
+};
+
+/// The different Senate Communication Types.
+#[derive(Debug, Clone, Copy)]
+pub enum SenateCommunicationType {
+    /// Executive Communications
+    Ec,
+    /// Presidential Messages
+    Pm,
+    /// Petitions or Memorials
+    Pom,
 }
 
-impl SenateCommunication {
-    pub fn builder() -> SenateCommunicationBuilder {
-        SenateCommunicationBuilder::default()
-    }
-}
-
-impl Endpoint for SenateCommunication {
-    fn method(&self) -> Method {
-        Method::GET
-    }
-
-    fn endpoint(&self) -> Cow<'static, str> {
-        "senate-communication".to_string().into()
-    }
-
-    fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params.push("format", self.format);
-        params.push_opt("offset", self.offset);
-        params.push_opt("limit", self.limit);
-
-        params
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{
-        api::senate_communication::SenateCommunication, auth::Auth, cdg::Cdg, query::Query,
-    };
-
-    #[test]
-    fn is_sufficient() {
-        SenateCommunication::builder().build().unwrap();
-    }
-
-    #[tokio::test]
-    async fn endpoint() {
-        dotenvy::dotenv().unwrap();
-
-        let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
-        let client = Cdg::new(auth).unwrap();
-
-        let endpoint = SenateCommunication::builder().build().unwrap();
-
-        let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
+impl SenateCommunicationType {
+    fn as_str(self) -> &'static str {
+        match self {
+            SenateCommunicationType::Ec => "ec",
+            SenateCommunicationType::Pm => "pm",
+            SenateCommunicationType::Pom => "pom",
+        }
     }
 }

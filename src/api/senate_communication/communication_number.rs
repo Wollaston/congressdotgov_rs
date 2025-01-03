@@ -2,9 +2,9 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::{Format, SenateCommunicationType};
+use super::SenateCommunicationType;
 
 /// Represents the /senate-communication/:congress/:communicationType/:communicationNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -52,12 +52,9 @@ impl Endpoint for CommunicationNumber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::senate_communication::congress::communication_type::communication_number::CommunicationNumber,
-        auth::Auth, cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
 
-    use super::SenateCommunicationType;
+    use super::*;
 
     #[test]
     fn is_sufficient() {

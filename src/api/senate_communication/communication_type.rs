@@ -2,11 +2,9 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
-
-mod communication_number;
+use super::SenateCommunicationType;
 
 /// Represents the /senate-communication/:congress/:communicationType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -55,35 +53,11 @@ impl Endpoint for CommunicationType {
     }
 }
 
-/// The different Senate Communication Types.
-#[derive(Debug, Clone, Copy)]
-pub enum SenateCommunicationType {
-    /// Executive Communications
-    Ec,
-    /// Presidential Messages
-    Pm,
-    /// Petitions or Memorials
-    Pom,
-}
-
-impl SenateCommunicationType {
-    fn as_str(self) -> &'static str {
-        match self {
-            SenateCommunicationType::Ec => "ec",
-            SenateCommunicationType::Pm => "pm",
-            SenateCommunicationType::Pom => "pom",
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::senate_communication::congress::communication_type::CommunicationType, auth::Auth,
-        cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
 
-    use super::SenateCommunicationType;
+    use super::*;
 
     #[test]
     fn is_sufficient() {
