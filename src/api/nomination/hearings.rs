@@ -2,9 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 /// Represents the /nomination/:congress/:nominationNumber/hearings endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -54,10 +52,9 @@ impl Endpoint for Hearings {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::nomination::congress::nomination_number::hearings::Hearings, auth::Auth, cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {

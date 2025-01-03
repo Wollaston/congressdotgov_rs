@@ -2,46 +2,49 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
-
-mod actions;
-mod committees;
-mod hearings;
-mod ordinal;
-
-/// Represents the /nomination/:congress/:nominationNumber endpoint.
+/// Represents the /nomination/:congress/:nominationNumber/committees endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct NominationNumber {
+pub struct Committees {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
     nomination_number: u32,
     #[builder(default)]
     format: Format,
+    #[builder(default)]
+    offset: Option<u32>,
+    #[builder(default)]
+    limit: Option<u8>,
 }
 
-impl NominationNumber {
-    pub fn builder() -> NominationNumberBuilder {
-        NominationNumberBuilder::default()
+impl Committees {
+    pub fn builder() -> CommitteesBuilder {
+        CommitteesBuilder::default()
     }
 }
 
-impl Endpoint for NominationNumber {
+impl Endpoint for Committees {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("nomination/{}/{}", self.congress, self.nomination_number).into()
+        format!(
+            "nomination/{}/{}/committees",
+            self.congress, self.nomination_number
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
         params.push("format", self.format);
+        params.push_opt("offset", self.offset);
+        params.push_opt("limit", self.limit);
 
         params
     }
@@ -49,14 +52,13 @@ impl Endpoint for NominationNumber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::nomination::congress::nomination_number::NominationNumber, auth::Auth, cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        NominationNumber::builder()
+        Committees::builder()
             .congress(117_u8)
             .nomination_number(2467_u32)
             .build()
@@ -70,7 +72,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = NominationNumber::builder()
+        let endpoint = Committees::builder()
             .congress(117_u8)
             .nomination_number(2467_u32)
             .build()

@@ -2,18 +2,18 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
-
-/// Represents the /nomination/:congress/:nominationNumber/committees endpoint.
+/// Represents the /nomination/:congress/:nominationNumber/:ordinal endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Committees {
+pub struct Ordinal {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
     nomination_number: u32,
+    #[builder(setter(into))]
+    ordinal: u32,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -22,21 +22,21 @@ pub struct Committees {
     limit: Option<u8>,
 }
 
-impl Committees {
-    pub fn builder() -> CommitteesBuilder {
-        CommitteesBuilder::default()
+impl Ordinal {
+    pub fn builder() -> OrdinalBuilder {
+        OrdinalBuilder::default()
     }
 }
 
-impl Endpoint for Committees {
+impl Endpoint for Ordinal {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "nomination/{}/{}/committees",
-            self.congress, self.nomination_number
+            "nomination/{}/{}/{}",
+            self.congress, self.nomination_number, self.ordinal
         )
         .into()
     }
@@ -54,16 +54,16 @@ impl Endpoint for Committees {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::nomination::congress::nomination_number::committees::Committees, auth::Auth, cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Committees::builder()
+        Ordinal::builder()
             .congress(117_u8)
             .nomination_number(2467_u32)
+            .ordinal(1_u32)
             .build()
             .unwrap();
     }
@@ -75,9 +75,10 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Committees::builder()
+        let endpoint = Ordinal::builder()
             .congress(117_u8)
             .nomination_number(2467_u32)
+            .ordinal(1_u32)
             .build()
             .unwrap();
 
