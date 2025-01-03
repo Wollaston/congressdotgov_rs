@@ -3,9 +3,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 /// Represents the /treaty/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
