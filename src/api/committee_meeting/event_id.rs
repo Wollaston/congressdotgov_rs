@@ -2,20 +2,22 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
+use crate::{
+    api::{CommitteeChamber, Format},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
-use super::Format;
-
-mod event_id;
-
-/// Represents the /committee-meeting/:congress/:chamber endpoint.
+/// Represents the /committee-meeting/:congress/:chamber/:eventId endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Chamber {
+pub struct EventId {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
     chamber: CommitteeChamber,
+    #[builder(setter(into))]
+    event_id: u32,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -24,22 +26,23 @@ pub struct Chamber {
     limit: Option<u8>,
 }
 
-impl Chamber {
-    pub fn builder() -> ChamberBuilder {
-        ChamberBuilder::default()
+impl EventId {
+    pub fn builder() -> EventIdBuilder {
+        EventIdBuilder::default()
     }
 }
 
-impl Endpoint for Chamber {
+impl Endpoint for EventId {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "committee-meeting/{}/{}",
+            "committee-meeting/{}/{}/{}",
             self.congress,
-            self.chamber.as_str()
+            self.chamber.as_str(),
+            self.event_id
         )
         .into()
     }
@@ -57,18 +60,16 @@ impl Endpoint for Chamber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::{committee_meeting::congress::chamber::Chamber, CommitteeChamber},
-        auth::Auth,
-        cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        Chamber::builder()
+        EventId::builder()
             .congress(118_u16)
             .chamber(CommitteeChamber::House)
+            .event_id(115538_u32)
             .build()
             .unwrap();
     }
@@ -80,9 +81,10 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Chamber::builder()
+        let endpoint = EventId::builder()
             .congress(118_u16)
             .chamber(CommitteeChamber::House)
+            .event_id(115538_u32)
             .build()
             .unwrap();
 
