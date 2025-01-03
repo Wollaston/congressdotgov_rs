@@ -2,11 +2,11 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
-
-mod jacket_number;
+use crate::{
+    api::{CommitteeChamber, Format},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
 /// Represents the /hearing/:congress/:chamber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -52,12 +52,9 @@ impl Endpoint for Chamber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::{hearing::congress::chamber::Chamber, CommitteeChamber},
-        auth::Auth,
-        cdg::Cdg,
-        query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {

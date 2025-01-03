@@ -4,12 +4,10 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-/// Represents the /hearing/:congress endpoint.
+/// Represents the /hearing endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Congress {
-    #[builder(setter(into))]
-    congress: u16,
+pub struct Hearing {
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -18,19 +16,19 @@ pub struct Congress {
     limit: Option<u8>,
 }
 
-impl Congress {
-    pub fn builder() -> CongressBuilder {
-        CongressBuilder::default()
+impl Hearing {
+    pub fn builder() -> HearingBuilder {
+        HearingBuilder::default()
     }
 }
 
-impl Endpoint for Congress {
+impl Endpoint for Hearing {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("hearing/{}", self.congress).into()
+        "hearing".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -52,7 +50,7 @@ mod tests {
 
     #[test]
     fn is_sufficient() {
-        Congress::builder().congress(116_u16).build().unwrap();
+        Hearing::builder().build().unwrap();
     }
 
     #[tokio::test]
@@ -62,7 +60,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Congress::builder().congress(116_u16).build().unwrap();
+        let endpoint = Hearing::builder().build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
