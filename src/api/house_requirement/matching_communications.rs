@@ -4,35 +4,45 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-/// Represents the /house-requirement/:requirementNumber endpoint.
+/// Represents the /house-requirement/:requirementNumber/matching-communications endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct RequirementNumber {
+pub struct MatchingCommunications {
     #[builder(setter(into))]
     requirement_number: u32,
     #[builder(default)]
     format: Format,
+    #[builder(default)]
+    offset: Option<u32>,
+    #[builder(default)]
+    limit: Option<u8>,
 }
 
-impl RequirementNumber {
-    pub fn builder() -> RequirementNumberBuilder {
-        RequirementNumberBuilder::default()
+impl MatchingCommunications {
+    pub fn builder() -> MatchingCommunicationsBuilder {
+        MatchingCommunicationsBuilder::default()
     }
 }
 
-impl Endpoint for RequirementNumber {
+impl Endpoint for MatchingCommunications {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("house-requirement/{}", self.requirement_number).into()
+        format!(
+            "house-requirement/{}/matching-communications",
+            self.requirement_number
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
         params.push("format", self.format);
+        params.push_opt("offset", self.offset);
+        params.push_opt("limit", self.limit);
 
         params
     }
@@ -46,7 +56,7 @@ mod tests {
 
     #[test]
     fn is_sufficient() {
-        RequirementNumber::builder()
+        MatchingCommunications::builder()
             .requirement_number(8070_u32)
             .build()
             .unwrap();
@@ -59,7 +69,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = RequirementNumber::builder()
+        let endpoint = MatchingCommunications::builder()
             .requirement_number(8070_u32)
             .build()
             .unwrap();

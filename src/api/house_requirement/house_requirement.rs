@@ -2,16 +2,12 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-use super::Format;
-
-/// Represents the /house-requirement/:requirementNumber/matching-communications endpoint.
+/// Represents the /house-requirement endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct MatchingCommunications {
-    #[builder(setter(into))]
-    requirement_number: u32,
+pub struct HouseRequirement {
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -20,23 +16,19 @@ pub struct MatchingCommunications {
     limit: Option<u8>,
 }
 
-impl MatchingCommunications {
-    pub fn builder() -> MatchingCommunicationsBuilder {
-        MatchingCommunicationsBuilder::default()
+impl HouseRequirement {
+    pub fn builder() -> HouseRequirementBuilder {
+        HouseRequirementBuilder::default()
     }
 }
 
-impl Endpoint for MatchingCommunications {
+impl Endpoint for HouseRequirement {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!(
-            "house-requirement/{}/matching-communications",
-            self.requirement_number
-        )
-        .into()
+        "house-requirement".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -52,17 +44,13 @@ impl Endpoint for MatchingCommunications {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::house_requirement::requirement_number::matching_communications::MatchingCommunications,
-        auth::Auth, cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
-        MatchingCommunications::builder()
-            .requirement_number(8070_u32)
-            .build()
-            .unwrap();
+        HouseRequirement::builder().build().unwrap();
     }
 
     #[tokio::test]
@@ -72,10 +60,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = MatchingCommunications::builder()
-            .requirement_number(8070_u32)
-            .build()
-            .unwrap();
+        let endpoint = HouseRequirement::builder().build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }
