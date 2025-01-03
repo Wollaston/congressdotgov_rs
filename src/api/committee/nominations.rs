@@ -4,8 +4,8 @@ use std::borrow::Cow;
 
 use crate::{
     api::{committee::CommitteeChamber, Format},
-    endpoint::Endpoint,
-    params::QueryParams,
+    api::endpoint::Endpoint,
+    api::params::QueryParams,
 };
 
 /// Represents the /committee/:chamber/:committeeCode/nominations endpoint.
@@ -57,7 +57,7 @@ impl Endpoint for Nominations<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::committee::CommitteeChamber, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::committee::CommitteeChamber, auth::Auth, cdg::Cdg, api::query::Query};
 
     use super::*;
 

@@ -3,12 +3,9 @@ use serde::de::DeserializeOwned;
 use std::borrow::Cow;
 use url::Url;
 
-use crate::{
-    api::error::ApiError,
-    client::Client,
-    params::QueryParams,
-    query::{self, Query},
-};
+use crate::{api::client::Client, api::error::ApiError, api::params::QueryParams};
+
+use super::{query, Query};
 
 /// The URL base for the congress.gov REST API.
 /// Currently, there is only one variant for the current

@@ -4,9 +4,9 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
+    api::endpoint::Endpoint,
+    api::params::QueryParams,
     api::{Format, Sort},
-    endpoint::Endpoint,
-    params::QueryParams,
 };
 
 /// Represents the /bill/:congress/:billtype endpoint.
@@ -62,7 +62,7 @@ impl Endpoint for BillType {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 

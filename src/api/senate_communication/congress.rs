@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /senate-communication/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -47,7 +47,7 @@ impl Endpoint for Congress {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::senate_communication::congress::Congress, auth::Auth, cdg::Cdg, query::Query,
+        api::senate_communication::congress::Congress, auth::Auth, cdg::Cdg, api::query::Query,
     };
 
     #[test]

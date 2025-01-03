@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /treaty/:congress/:treatyNumber/:treatySuffix endpoint.
 #[derive(Debug, Clone, Builder)]
@@ -48,7 +48,7 @@ impl Endpoint for TreatySuffix<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
 
     use super::*;
 

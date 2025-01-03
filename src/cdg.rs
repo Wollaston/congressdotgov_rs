@@ -4,7 +4,7 @@ use reqwest::{Client, Request};
 use thiserror::Error;
 use url::Url;
 
-use crate::{api::error::ApiError, auth::Auth};
+use crate::{api::ApiError, auth::Auth};
 
 /// Various error types that can occur when using the Cdg struct
 /// and its values.
@@ -62,7 +62,7 @@ impl Cdg {
     }
 }
 
-impl crate::client::Client for Cdg {
+impl crate::api::Client for Cdg {
     type Error = CdgError;
 
     /// Constructs an endpoint URL by combining the base_url
@@ -105,8 +105,6 @@ impl crate::client::Client for Cdg {
 
             Ok(http_rsp.body(rsp.bytes().await?)?)
         };
-        call()
-            .await
-            .map_err(|e| ApiError::<Self::Error>::Client { source: e })
+        call().await.map_err(|e| ApiError::Client { source: e })
     }
 }

@@ -1,5 +1,7 @@
 #![allow(clippy::module_inception)]
 
+//! Bound-congressional-record API endpoints.
+
 mod bound_congressional_record;
 mod day;
 mod month;

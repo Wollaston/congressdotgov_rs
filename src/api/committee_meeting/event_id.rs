@@ -4,8 +4,8 @@ use std::borrow::Cow;
 
 use crate::{
     api::{CommitteeChamber, Format},
-    endpoint::Endpoint,
-    params::QueryParams,
+    api::endpoint::Endpoint,
+    api::params::QueryParams,
 };
 
 /// Represents the /committee-meeting/:congress/:chamber/:eventId endpoint.
@@ -60,7 +60,7 @@ impl Endpoint for EventId {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
 
     use super::*;
 

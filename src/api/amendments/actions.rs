@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
+use crate::{api::endpoint::Endpoint, api::params::QueryParams, api::Format};
 
 use super::CongressionalAmendmentType;
 
@@ -58,7 +58,7 @@ impl Endpoint for Actions {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 

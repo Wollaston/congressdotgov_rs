@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /daily-congressional-record/:volumeNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -46,7 +46,7 @@ impl Endpoint for VolumeNumber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
 
     use super::*;
 

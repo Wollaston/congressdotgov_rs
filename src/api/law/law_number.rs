@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 use super::CongressionalLawType;
 
@@ -58,7 +58,7 @@ impl Endpoint for LawNumber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::law::law_number::LawNumber, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::law::law_number::LawNumber, auth::Auth, cdg::Cdg, api::query::Query};
 
     use super::CongressionalLawType;
 

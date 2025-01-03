@@ -1,4 +1,4 @@
-use crate::{api::error::ApiError, cdg::CdgError, client::Client};
+use crate::{api::client::Client, api::error::ApiError, cdg::CdgError};
 use http::Uri;
 use url::Url;
 
@@ -13,5 +13,6 @@ where
     C: Client,
 {
     /// Perform the query against the client.
-    async fn query(&self, client: &C) -> Result<T, ApiError<C::Error>>;
+    fn query(&self, client: &C)
+        -> impl std::future::Future<Output = Result<T, ApiError<C::Error>>>;
 }

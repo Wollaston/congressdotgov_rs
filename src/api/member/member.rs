@@ -3,7 +3,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
+use crate::{api::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /member endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -54,7 +54,7 @@ impl Endpoint for Member {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
 
     use super::*;
 

@@ -5,8 +5,8 @@ use std::borrow::Cow;
 
 use crate::{
     api::{Format, Sort},
-    endpoint::Endpoint,
-    params::QueryParams,
+    api::endpoint::Endpoint,
+    api::params::QueryParams,
 };
 
 /// Represents the /summaries/:congress/:billType endpoint.
@@ -62,7 +62,7 @@ impl Endpoint for BillType {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
 
     use super::*;
 

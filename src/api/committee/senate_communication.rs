@@ -4,8 +4,8 @@ use std::borrow::Cow;
 
 use crate::{
     api::{committee::CommitteeChamber, Format},
-    endpoint::Endpoint,
-    params::QueryParams,
+    api::endpoint::Endpoint,
+    api::params::QueryParams,
 };
 
 /// Represents the /committee/:chamber/:committeeCode/senate-communication endpoint.
@@ -57,7 +57,7 @@ impl Endpoint for SenateCommunication<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, query::Query};
+    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
 
     use super::*;
 

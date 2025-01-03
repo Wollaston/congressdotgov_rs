@@ -1,3 +1,5 @@
+//! API Errors.
+
 use std::error::Error;
 use thiserror::Error;
 

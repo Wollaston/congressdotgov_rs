@@ -4,8 +4,8 @@ use std::borrow::Cow;
 
 use crate::{
     api::{law::CongressionalLawType, Format},
-    endpoint::Endpoint,
-    params::QueryParams,
+    api::endpoint::Endpoint,
+    api::params::QueryParams,
 };
 
 /// Represents the /law/:congress/:lawType endpoint.
@@ -52,7 +52,7 @@ impl Endpoint for LawType {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, query::Query, Cdg};
+    use crate::{auth::Auth, api::query::Query, Cdg};
 
     use super::*;
 

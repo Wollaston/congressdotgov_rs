@@ -33,6 +33,12 @@
 
 use std::borrow::Cow;
 
+mod client;
+mod endpoint;
+mod error;
+mod params;
+pub(crate) mod query;
+
 pub mod amendments;
 pub mod bill;
 pub mod bound_congressional_record;
@@ -43,7 +49,6 @@ pub mod committee_report;
 pub mod congress;
 pub mod congressional_record;
 pub mod daily_congressional_record;
-pub mod error;
 pub mod hearing;
 pub mod house_communication;
 pub mod house_requirement;
@@ -53,6 +58,18 @@ pub mod nomination;
 pub mod senate_communication;
 pub mod summaries;
 pub mod treaty;
+
+pub use self::client::Client;
+
+pub use self::endpoint::Endpoint;
+pub use self::endpoint::UrlBase;
+
+pub use self::error::ApiError;
+
+pub use self::params::ParamValue;
+pub use self::params::QueryParams;
+
+pub use self::query::Query;
 
 /// Chamber options for Committee endpoints.
 ///

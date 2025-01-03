@@ -1,3 +1,5 @@
+//! A trait representing a client which can communicate with a GitLab instance via REST.
+
 use bytes::Bytes;
 use http::Response;
 use std::error::Error;
@@ -12,9 +14,9 @@ pub trait Client {
 
     fn set_auth(&self, url: &mut Url);
 
-    async fn rest(
+    fn rest(
         &self,
         request: http::request::Builder,
         body: Vec<u8>,
-    ) -> Result<Response<Bytes>, ApiError<Self::Error>>;
+    ) -> impl std::future::Future<Output = Result<Response<Bytes>, ApiError<Self::Error>>> + Send;
 }

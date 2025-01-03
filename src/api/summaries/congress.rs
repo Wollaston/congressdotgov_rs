@@ -5,8 +5,8 @@ use std::borrow::Cow;
 
 use crate::{
     api::{Format, Sort},
-    endpoint::Endpoint,
-    params::QueryParams,
+    api::endpoint::Endpoint,
+    api::params::QueryParams,
 };
 
 /// Represents the /summaries/:congress endpoint.
@@ -60,7 +60,7 @@ impl Endpoint for Congress {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::summaries::congress::Congress, auth::Auth, cdg::Cdg, query::Query};
+    use crate::{api::summaries::congress::Congress, auth::Auth, cdg::Cdg, api::query::Query};
 
     #[test]
     fn is_sufficient() {
