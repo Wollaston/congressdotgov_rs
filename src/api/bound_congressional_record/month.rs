@@ -4,12 +4,14 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-/// Represents the /bound-congressional-record/:year endpoint.
+/// Represents the /bound-congressional-record/:year/:month endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct Year {
+pub struct Month {
     #[builder(setter(into))]
     year: u16,
+    #[builder(setter(into))]
+    month: u8,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -18,19 +20,19 @@ pub struct Year {
     limit: Option<u8>,
 }
 
-impl Year {
-    pub fn builder() -> YearBuilder {
-        YearBuilder::default()
+impl Month {
+    pub fn builder() -> MonthBuilder {
+        MonthBuilder::default()
     }
 }
 
-impl Endpoint for Year {
+impl Endpoint for Month {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("bound-congressional-record/{}", self.year).into()
+        format!("bound-congressional-record/{}/{}", self.year, self.month).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -52,7 +54,7 @@ mod tests {
 
     #[test]
     fn is_sufficient() {
-        Year::builder().year(1990_u16).build().unwrap();
+        Month::builder().year(1990_u16).month(4_u8).build().unwrap();
     }
 
     #[tokio::test]
@@ -62,7 +64,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = Year::builder().year(1990_u16).build().unwrap();
+        let endpoint = Month::builder().year(1990_u16).month(5_u8).build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

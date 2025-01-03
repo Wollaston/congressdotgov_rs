@@ -2,9 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 /// Represents the /bound-congressional-record/:year/:month/:day endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -56,9 +54,9 @@ impl Endpoint for Day {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::bound_congressional_record::year::month::day::Day, auth::Auth, cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {

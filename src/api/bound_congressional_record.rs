@@ -1,72 +1,13 @@
-use derive_builder::Builder;
-use http::Method;
-use std::borrow::Cow;
+#![allow(clippy::module_inception)]
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
-
+mod bound_congressional_record;
+mod day;
+mod month;
 mod year;
 
-/// Represents the /bound-congressional-record endpoint.
-#[derive(Debug, Clone, Copy, Builder)]
-#[builder(setter(strip_option))]
-pub struct BoundCongressionalRecord {
-    #[builder(default)]
-    format: Format,
-    #[builder(default)]
-    offset: Option<u32>,
-    #[builder(default)]
-    limit: Option<u8>,
-}
-
-impl BoundCongressionalRecord {
-    pub fn builder() -> BoundCongressionalRecordBuilder {
-        BoundCongressionalRecordBuilder::default()
-    }
-}
-
-impl Endpoint for BoundCongressionalRecord {
-    fn method(&self) -> Method {
-        Method::GET
-    }
-
-    fn endpoint(&self) -> Cow<'static, str> {
-        "bound-congressional-record".to_string().into()
-    }
-
-    fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params.push("format", self.format);
-        params.push_opt("offset", self.offset);
-        params.push_opt("limit", self.limit);
-
-        params
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{
-        api::bound_congressional_record::BoundCongressionalRecord, auth::Auth, cdg::Cdg,
-        query::Query,
-    };
-
-    #[test]
-    fn is_sufficient() {
-        BoundCongressionalRecord::builder().build().unwrap();
-    }
-
-    #[tokio::test]
-    async fn endpoint() {
-        dotenvy::dotenv().unwrap();
-
-        let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
-        let client = Cdg::new(auth).unwrap();
-
-        let endpoint = BoundCongressionalRecord::builder().build().unwrap();
-
-        let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
-    }
-}
+pub use self::bound_congressional_record::{
+    BoundCongressionalRecord, BoundCongressionalRecordBuilder, BoundCongressionalRecordBuilderError,
+};
+pub use self::day::{Day, DayBuilder, DayBuilderError};
+pub use self::month::{Month, MonthBuilder, MonthBuilderError};
+pub use self::year::{Year, YearBuilder, YearBuilderError};
