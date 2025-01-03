@@ -4,12 +4,10 @@ use std::borrow::Cow;
 
 use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
-/// Represents the /daily-congressional-record/:volumeNumber endpoint.
+/// Represents the /daily-congressional-record endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
 #[builder(setter(strip_option))]
-pub struct VolumeNumber {
-    #[builder(setter(into))]
-    volume_number: u32,
+pub struct DailyCongressionalRecord {
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -18,19 +16,19 @@ pub struct VolumeNumber {
     limit: Option<u8>,
 }
 
-impl VolumeNumber {
-    pub fn builder() -> VolumeNumberBuilder {
-        VolumeNumberBuilder::default()
+impl DailyCongressionalRecord {
+    pub fn builder() -> DailyCongressionalRecordBuilder {
+        DailyCongressionalRecordBuilder::default()
     }
 }
 
-impl Endpoint for VolumeNumber {
+impl Endpoint for DailyCongressionalRecord {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("daily-congressional-record/{}", self.volume_number).into()
+        "daily-congressional-record".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -52,10 +50,7 @@ mod tests {
 
     #[test]
     fn is_sufficient() {
-        VolumeNumber::builder()
-            .volume_number(166_u32)
-            .build()
-            .unwrap();
+        DailyCongressionalRecord::builder().build().unwrap();
     }
 
     #[tokio::test]
@@ -65,10 +60,7 @@ mod tests {
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let client = Cdg::new(auth).unwrap();
 
-        let endpoint = VolumeNumber::builder()
-            .volume_number(116_u32)
-            .build()
-            .unwrap();
+        let endpoint = DailyCongressionalRecord::builder().build().unwrap();
 
         let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
     }

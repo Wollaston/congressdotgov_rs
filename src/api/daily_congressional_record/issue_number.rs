@@ -2,11 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{endpoint::Endpoint, params::QueryParams};
-
-use super::Format;
-
-mod articles;
+use crate::{api::Format, endpoint::Endpoint, params::QueryParams};
 
 /// Represents the /daily-congressional-record/:volumeNumber/:issueNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -56,10 +52,9 @@ impl Endpoint for IssueNumber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        api::daily_congressional_record::volume_number::issue_number::IssueNumber, auth::Auth,
-        cdg::Cdg, query::Query,
-    };
+    use crate::{auth::Auth, cdg::Cdg, query::Query};
+
+    use super::*;
 
     #[test]
     fn is_sufficient() {
