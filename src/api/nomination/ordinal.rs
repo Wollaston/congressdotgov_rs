@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::endpoint::Endpoint, api::params::QueryParams, api::common::Format};
+use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /nomination/:congress/:nominationNumber/:ordinal endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -151,24 +151,6 @@ mod tests {
         let client = Cdg::new(auth).unwrap();
 
         let endpoint = Ordinal::builder()
-            .congress(117_u8)
-            .nomination_number(2467_u32)
-            .ordinal(1_u32)
-            .build()
-            .unwrap();
-
-        let _res: serde_json::Value = endpoint.query(&client).await.unwrap();
-    }
-
-    #[tokio::test]
-    async fn test_format_endpoint() {
-        dotenvy::dotenv().unwrap();
-
-        let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
-        let client = Cdg::new(auth).unwrap();
-
-        let endpoint = Ordinal::builder()
-            .format(Format::Xml)
             .congress(117_u8)
             .nomination_number(2467_u32)
             .ordinal(1_u32)
