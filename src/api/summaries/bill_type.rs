@@ -4,7 +4,7 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    api::{Format, Sort},
+    api::common::{Format, Sort},
     api::endpoint::Endpoint,
     api::params::QueryParams,
 };
@@ -16,7 +16,7 @@ pub struct BillType {
     #[builder(setter(into))]
     congress: u16,
     #[builder(setter(into))]
-    bill_type: crate::api::BillType,
+    bill_type: crate::api::common::BillType,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -70,7 +70,7 @@ mod tests {
     fn is_sufficient() {
         BillType::builder()
             .congress(118_u16)
-            .bill_type(crate::api::BillType::Hr)
+            .bill_type(crate::api::common::BillType::Hr)
             .build()
             .unwrap();
     }
@@ -84,7 +84,7 @@ mod tests {
 
         let endpoint = BillType::builder()
             .congress(118_u16)
-            .bill_type(crate::api::BillType::Hr)
+            .bill_type(crate::api::common::BillType::Hr)
             .build()
             .unwrap();
 

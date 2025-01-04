@@ -3,7 +3,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, api::endpoint::Endpoint, api::params::QueryParams};
+use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /committee-report/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]

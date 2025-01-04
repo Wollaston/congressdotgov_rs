@@ -6,7 +6,7 @@ use std::borrow::Cow;
 use crate::{
     api::endpoint::Endpoint,
     api::params::QueryParams,
-    api::{Format, Sort},
+    api::common::{Format, Sort},
 };
 
 /// Represents the /bill/:congress/:billtype endpoint.
@@ -16,7 +16,7 @@ pub struct BillType {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
-    bill_type: crate::api::BillType,
+    bill_type: crate::api::common::BillType,
     #[builder(default)]
     format: Format,
     #[builder(default)]
@@ -70,7 +70,7 @@ mod tests {
     fn bll_is_sufficient() {
         BillType::builder()
             .congress(117_u8)
-            .bill_type(crate::api::BillType::Hr)
+            .bill_type(crate::api::common::BillType::Hr)
             .build()
             .unwrap();
     }
@@ -84,7 +84,7 @@ mod tests {
 
         let endpoint = BillType::builder()
             .congress(117_u8)
-            .bill_type(crate::api::BillType::Hr)
+            .bill_type(crate::api::common::BillType::Hr)
             .build()
             .unwrap();
 

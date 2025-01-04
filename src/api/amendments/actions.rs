@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::endpoint::Endpoint, api::params::QueryParams, api::Format};
+use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 use super::CongressionalAmendmentType;
 

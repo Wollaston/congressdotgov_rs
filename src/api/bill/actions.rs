@@ -2,7 +2,11 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, api::endpoint::Endpoint, api::params::QueryParams};
+use crate::api::{
+    common::{BillType, Format},
+    endpoint::Endpoint,
+    params::QueryParams,
+};
 
 /// Represents the /bill/:congress/:billtype/:billnumber/actions endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -11,7 +15,7 @@ pub struct Actions {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
-    bill_type: crate::api::BillType,
+    bill_type: BillType,
     #[builder(setter(into))]
     bill_number: u32,
     #[builder(default)]
@@ -56,7 +60,7 @@ impl Endpoint for Actions {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 
@@ -64,7 +68,7 @@ mod tests {
     fn bll_is_sufficient() {
         Actions::builder()
             .congress(117_u8)
-            .bill_type(crate::api::BillType::Hr)
+            .bill_type(crate::api::common::BillType::Hr)
             .bill_number(3076_u32)
             .build()
             .unwrap();
@@ -79,7 +83,7 @@ mod tests {
 
         let endpoint = Actions::builder()
             .congress(117_u8)
-            .bill_type(crate::api::BillType::Hr)
+            .bill_type(crate::api::common::BillType::Hr)
             .bill_number(3076_u32)
             .build()
             .unwrap();

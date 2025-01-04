@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use chrono::{DateTime, NaiveDate, Utc};
 use url::Url;
 
-use crate::api::{Format, Sort};
+use crate::api::common::{Format, Sort};
 
 /// A trait representing a parameter value.
 pub trait ParamValue<'a> {

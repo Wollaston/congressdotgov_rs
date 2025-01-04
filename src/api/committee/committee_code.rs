@@ -5,7 +5,7 @@ use std::borrow::Cow;
 use crate::{
     api::endpoint::Endpoint,
     api::params::QueryParams,
-    api::{committee::CommitteeChamber, Format},
+    api::{committee::CommitteeChamber, common::Format},
 };
 
 /// Represents the /committee/:chamber/:committeeCode endpoint.

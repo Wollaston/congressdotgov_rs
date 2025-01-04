@@ -4,7 +4,7 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    api::{Format, Sort},
+    api::common::{Format, Sort},
     api::endpoint::Endpoint,
     api::params::QueryParams,
 };

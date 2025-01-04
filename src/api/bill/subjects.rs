@@ -3,7 +3,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, api::endpoint::Endpoint, api::params::QueryParams};
+use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /bill/:congress/:billtype/:billnumber/subjects endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -12,7 +12,7 @@ pub struct Subjects {
     #[builder(setter(into))]
     congress: u8,
     #[builder(setter(into))]
-    bill_type: crate::api::BillType,
+    bill_type: crate::api::common::BillType,
     #[builder(setter(into))]
     bill_number: u32,
     #[builder(default)]
@@ -71,7 +71,7 @@ mod tests {
     fn bll_is_sufficient() {
         Subjects::builder()
             .congress(117_u8)
-            .bill_type(crate::api::BillType::Hr)
+            .bill_type(crate::api::common::BillType::Hr)
             .bill_number(3076_u32)
             .build()
             .unwrap();
@@ -86,7 +86,7 @@ mod tests {
 
         let endpoint = Subjects::builder()
             .congress(117_u8)
-            .bill_type(crate::api::BillType::Hr)
+            .bill_type(crate::api::common::BillType::Hr)
             .bill_number(3076_u32)
             .build()
             .unwrap();

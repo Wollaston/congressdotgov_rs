@@ -3,10 +3,8 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{
-    api::{committee::CommitteeChamber, Format},
-    api::endpoint::Endpoint,
-    api::params::QueryParams,
+use crate::api::{
+    committee::CommitteeChamber, common::Format, endpoint::Endpoint, params::QueryParams,
 };
 
 /// Represents the /committee/:chamber/:committeeCode/bills endpoint.
@@ -64,7 +62,7 @@ impl Endpoint for Bills<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 

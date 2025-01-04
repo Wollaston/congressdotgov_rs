@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::Format, api::endpoint::Endpoint, api::params::QueryParams};
+use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /daily-congressional-record/:volumeNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]

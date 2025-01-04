@@ -4,7 +4,7 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    api::{CommitteeChamber, Format},
+    api::common::{CommitteeChamber, Format},
     api::endpoint::Endpoint,
     api::params::QueryParams,
 };

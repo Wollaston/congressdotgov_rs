@@ -4,9 +4,9 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    api::{committee::CommitteeChamber, Format},
     api::endpoint::Endpoint,
     api::params::QueryParams,
+    api::{committee::CommitteeChamber, common::Format},
 };
 
 /// Represents the /committee/:congress/:chamber endpoint.
@@ -59,7 +59,7 @@ impl Endpoint for ChamberByCongress {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::committee::CommitteeChamber, auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::committee::CommitteeChamber, api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 

@@ -3,7 +3,7 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    api::{CommitteeChamber, Format},
+    api::common::{CommitteeChamber, Format},
     api::endpoint::Endpoint,
     api::params::QueryParams,
 };
@@ -57,7 +57,7 @@ impl Endpoint for Chamber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 

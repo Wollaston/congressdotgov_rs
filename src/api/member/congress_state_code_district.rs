@@ -3,9 +3,9 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    api::{member::CongressionalStateCode, Format},
     api::endpoint::Endpoint,
     api::params::QueryParams,
+    api::{common::Format, member::CongressionalStateCode},
 };
 
 /// Represents the /member/congress/:congress/:stateCode/:district endpoint.
@@ -59,7 +59,7 @@ impl Endpoint for CongressStateCodeDistrict {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 

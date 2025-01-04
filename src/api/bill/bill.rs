@@ -4,7 +4,7 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    api::{Format, Sort},
+    api::common::{Format, Sort},
     api::endpoint::Endpoint,
     api::params::QueryParams,
 };
@@ -58,7 +58,7 @@ impl Endpoint for Bill {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 
