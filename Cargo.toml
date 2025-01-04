@@ -9,7 +9,7 @@ congress.gov API bindings.
 """
 repository = "https://github.com/Wollaston/congressdotgov_rs"
 readme = "README.md"
-keywords = ["congress.gov", "api"]
+keywords = ["congress-gov", "api"]
 categories = ["web-programming", "api-bindings"]
 
 [dependencies]
