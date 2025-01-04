@@ -4,9 +4,9 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    api::{committee::CommitteeChamber, common::Format},
     api::endpoint::Endpoint,
     api::params::QueryParams,
+    api::{committee::CommitteeChamber, common::Format},
 };
 
 /// Represents the /committee/:chamber/:committeeCode/reports endpoint.
@@ -64,7 +64,7 @@ impl Endpoint for Reports<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 

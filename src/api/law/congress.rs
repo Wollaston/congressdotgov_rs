@@ -46,7 +46,7 @@ impl Endpoint for Congress {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::law::congress::Congress, auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::law::congress::Congress, api::query::Query, auth::Auth, cdg::Cdg};
 
     #[test]
     fn is_sufficient() {

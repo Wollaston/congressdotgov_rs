@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::endpoint::Endpoint, api::params::QueryParams, api::common::Format};
+use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /house-requirement/:requirementNumber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]

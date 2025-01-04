@@ -54,7 +54,7 @@ impl Endpoint for TreatySuffixActions<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 

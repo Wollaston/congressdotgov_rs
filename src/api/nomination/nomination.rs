@@ -51,7 +51,7 @@ impl Endpoint for Nomination {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::nomination::Nomination, auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::nomination::Nomination, api::query::Query, auth::Auth, cdg::Cdg};
 
     #[test]
     fn is_sufficient() {

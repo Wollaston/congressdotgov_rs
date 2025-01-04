@@ -58,7 +58,7 @@ impl Endpoint for LawNumber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::law::law_number::LawNumber, auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::law::law_number::LawNumber, api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::CongressionalLawType;
 

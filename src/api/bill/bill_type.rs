@@ -4,9 +4,9 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
+    api::common::{Format, Sort},
     api::endpoint::Endpoint,
     api::params::QueryParams,
-    api::common::{Format, Sort},
 };
 
 /// Represents the /bill/:congress/:billtype endpoint.

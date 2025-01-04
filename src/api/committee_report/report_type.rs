@@ -3,7 +3,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::endpoint::Endpoint, api::params::QueryParams, api::common::Format};
+use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
 
 use super::CommitteeReportType;
 
@@ -65,7 +65,7 @@ impl Endpoint for ReportType {
 
 #[cfg(test)]
 mod tests {
-    use crate::{auth::Auth, cdg::Cdg, api::query::Query};
+    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 

@@ -47,7 +47,7 @@ impl Endpoint for Congress {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::senate_communication::congress::Congress, auth::Auth, cdg::Cdg, api::query::Query,
+        api::query::Query, api::senate_communication::congress::Congress, auth::Auth, cdg::Cdg,
     };
 
     #[test]
