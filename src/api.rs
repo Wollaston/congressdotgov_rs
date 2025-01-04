@@ -11,13 +11,14 @@
 //! ```rust,no_run
 //! use serde::Deserialize;
 //! use congressdotgov_rs::Cdg;
-//! use congressdotgov_rs::api::{self, Query};
-//! use congressdotgov_rs::api::bill::Congress;
+//! use congressdotgov_rs::api::Query;
+//! use congressdotgov_rs::api::bill;
 //! use congressdotgov_rs::Auth;
 //! use tokio_test::block_on;
 //!
-//! // The return type of a `Bill`. Note that Cdg may contain more information, but you can
-//! // define your structure to only fetch what is needed.
+//! // The return type of a `Bill`. Note that a Bill may contain more information, but you can
+//! // define your structure to only deserialize what is needed as the return value is a
+//! // serde_json::Value.
 //! #[derive(Debug, Deserialize)]
 //! struct Bill {
 //!     title: String,
@@ -28,7 +29,8 @@
 //! let client = Cdg::new(auth).unwrap();
 //!
 //! // Create a simple endpoint. This one gets recent Bills from the 118th Congress.
-//! let endpoint = Congress::builder().congress(118_u8).build().unwrap();
+//! let endpoint = bill::Congress::builder().congress(118_u8).build().unwrap();
+//!
 //! // Call the endpoint. The return type decides how to represent the value.
 //! # tokio_test::block_on(async {
 //! let bills: Vec<Bill> = endpoint.query(&client).await.unwrap();

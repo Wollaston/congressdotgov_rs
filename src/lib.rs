@@ -13,5 +13,8 @@ pub mod api;
 mod auth;
 mod cdg;
 
+#[cfg(test)]
+mod test;
+
 pub use crate::auth::Auth;
 pub use crate::cdg::{Cdg, CdgError};
