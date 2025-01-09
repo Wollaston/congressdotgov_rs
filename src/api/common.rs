@@ -29,20 +29,27 @@ impl CommitteeChamber {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum BillType {
     /// H.R. - House Bill
+    #[serde(alias = "HR")]
     Hr,
     /// S. - Senate Bill
     S,
     /// H.J. Res. - House Joint Resolution
+    #[serde(alias = "HJRES")]
     Hjres,
     /// S.J. Res. - Senate Joint Resolution
+    #[serde(alias = "SJRES")]
     Sjres,
     /// H. Con. Res. - House Concurrent Resolution
+    #[serde(alias = "HCONRES")]
     Hconres,
     /// S. Con. Res. - Senate Concurrent Resolution
+    #[serde(alias = "SCONRES")]
     Sconres,
     /// H. Res. - House Simple Resolution
+    #[serde(alias = "HRES")]
     Hres,
     /// S. Res - Senate Simple Resolution
+    #[serde(alias = "SRES")]
     Sres,
 }
 
