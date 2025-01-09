@@ -64,7 +64,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client).unwrap();
 
         let endpoint = SponsoredLegislation::builder()
             .bioguide_id("L000174")

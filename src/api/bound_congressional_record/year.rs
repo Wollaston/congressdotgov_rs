@@ -61,7 +61,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client).unwrap();
 
         let endpoint = Year::builder().year(1990_u16).build().unwrap();
 
