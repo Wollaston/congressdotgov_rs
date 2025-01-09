@@ -2,6 +2,8 @@
 
 //! Committee-report API endpoints and types.
 
+use serde::{Deserialize, Serialize};
+
 mod committee_report;
 mod congress;
 mod report_number;
@@ -16,7 +18,7 @@ pub use self::report_number::{ReportNumber, ReportNumberBuilder, ReportNumberBui
 pub use self::report_type::{ReportType, ReportTypeBuilder, ReportTypeBuilderError};
 pub use self::text::{Text, TextBuilder, TextBuilderError};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CommitteeReportType {
     Hrpt,
     Srpt,

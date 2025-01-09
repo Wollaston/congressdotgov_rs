@@ -1,12 +1,13 @@
 //! API types common to many endpoints.
 
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
 /// Chamber options for Committee endpoints.
 ///
 /// This differs from the Chamber enum for the Committee
 /// resource as this has the NoChamber variant.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CommitteeChamber {
     House,
     Senate,
@@ -25,7 +26,7 @@ impl CommitteeChamber {
 
 /// The possible Congressional bill types for both
 /// the House of Representatives and Senate.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum BillType {
     /// H.R. - House Bill
     Hr,
@@ -35,7 +36,7 @@ pub enum BillType {
     Hjres,
     /// S.J. Res. - Senate Joint Resolution
     Sjres,
-    /// S.J. Res. - House Concurrent Resolution
+    /// H. Con. Res. - House Concurrent Resolution
     Hconres,
     /// S. Con. Res. - Senate Concurrent Resolution
     Sconres,
@@ -62,7 +63,7 @@ impl BillType {
 
 /// The congress.gov API can return data in either Json or XML
 /// format. The default for this crate is Json.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Format {
     Json,
     Xml,
@@ -91,7 +92,7 @@ impl Format {
 
 /// Certain endpoints allow the response to be sorted
 /// in either Ascending or Descending order.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Sort {
     /// Ascending order
     Asc,

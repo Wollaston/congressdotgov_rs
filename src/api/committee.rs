@@ -2,6 +2,8 @@
 
 //! Committee API endpoints and types.
 
+use serde::{Deserialize, Serialize};
+
 mod bills;
 mod chamber;
 mod chamber_by_congress;
@@ -33,7 +35,7 @@ pub use self::senate_communication::{
 /// Chamber options for the Committee resource.
 ///
 /// This differs from CommitteeChamber enum with its Joint variant.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CommitteeChamber {
     House,
     Senate,

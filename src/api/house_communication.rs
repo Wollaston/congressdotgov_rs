@@ -2,6 +2,8 @@
 
 //! House-communication API endpoints and types.
 
+use serde::{Deserialize, Serialize};
+
 mod communication_number;
 mod communication_type;
 mod congress;
@@ -10,7 +12,7 @@ mod house_communication;
 /// The possible communication types in the House of Representatives
 /// available via the congress.gov API. R – Requirements also exists,
 /// but it is not an option with the API.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum HouseCommunicationType {
     /// Executive Communications
     Ec,

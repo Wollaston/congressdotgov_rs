@@ -2,6 +2,8 @@
 //!
 //! Note there is no general /law endpoint.
 
+use serde::{Deserialize, Serialize};
+
 pub use congress::Congress;
 pub use congress::CongressBuilder;
 pub use congress::CongressBuilderError;
@@ -19,7 +21,7 @@ mod law_number;
 mod law_type;
 
 /// The possible law types in Congress. Also known as 'slip laws.'
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CongressionalLawType {
     /// Public laws affect society as a whole
     Public,

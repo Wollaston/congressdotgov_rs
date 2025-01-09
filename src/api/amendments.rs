@@ -2,6 +2,8 @@
 
 //! Amendments API endpoints and types.
 
+use serde::{Deserialize, Serialize};
+
 mod actions;
 mod amendment;
 mod amendment_number;
@@ -23,7 +25,7 @@ pub use self::cosponsors::{Cosponsors, CosponsorsBuilder, CosponsorsBuilderError
 pub use self::text::{Text, TextBuilder, TextBuilderError};
 
 /// The possible Amendment Types in Congress.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CongressionalAmendmentType {
     /// H.Amdt. - House amendment. Amends a House bill.
     Hamdt,

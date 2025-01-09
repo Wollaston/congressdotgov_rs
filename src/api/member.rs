@@ -1,6 +1,8 @@
 #![allow(clippy::module_inception)]
 
-//! Member API endpoints and types.
+//! API endpoints and types.
+
+use serde::{Deserialize, Serialize};
 
 mod bioguide_id;
 mod congress;
@@ -32,7 +34,7 @@ pub use self::state_code_district::{
 /// The different possible state codes that can be used when querying
 /// and filtering Congressional member data. These match the two-digit
 /// postal codes for the 50 U.S. states and the District of Columbia.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum CongressionalStateCode {
     AL,
     AK,

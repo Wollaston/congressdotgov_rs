@@ -2,6 +2,8 @@
 
 //! Senate-communication API endpoints and types.
 
+use serde::{Deserialize, Serialize};
+
 mod communication_number;
 mod communication_type;
 mod congress;
@@ -19,7 +21,7 @@ pub use self::senate_communication::{
 };
 
 /// The different Senate Communication Types.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum SenateCommunicationType {
     /// Executive Communications
     Ec,
