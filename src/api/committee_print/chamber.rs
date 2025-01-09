@@ -82,7 +82,8 @@ mod tests {
         dotenvy::dotenv().unwrap();
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
-        let client = Cdg::new(auth).unwrap();
+        let req_client = reqwest::Client::new();
+let client = Cdg::new(auth, req_client).unwrap();
 
         let endpoint = Chamber::builder()
             .congress(116_u16)

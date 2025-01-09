@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 
 use chrono::{DateTime, NaiveDate, Utc};
+use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::api::common::{Format, Sort};
@@ -108,7 +109,7 @@ impl ParamValue<'static> for Sort {
 }
 
 /// A structure for query parameters.
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct QueryParams<'a> {
     params: Vec<(Cow<'a, str>, Cow<'a, str>)>,
 }

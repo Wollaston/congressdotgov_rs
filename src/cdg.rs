@@ -53,9 +53,9 @@ pub struct Cdg {
 
 impl Cdg {
     /// Creates a new Cdg struct with the provided Auth.
-    pub fn new(auth: Auth) -> Result<Cdg, CdgError> {
+    pub fn new(auth: Auth, client: reqwest::Client) -> Result<Cdg, CdgError> {
         Ok(Cdg {
-            client: reqwest::Client::new(),
+            client,
             base_url: Url::parse("https://api.congress.gov/v3/")?,
             auth,
         })

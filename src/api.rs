@@ -26,7 +26,8 @@
 //!
 //! // Create the client.
 //! let auth = Auth::Token("API_KEY".into());
-//! let client = Cdg::new(auth).unwrap();
+//! let req_client = reqwest::Client::new();
+//! let client = Cdg::new(auth, req_client).unwrap();
 //!
 //! // Create a simple endpoint. This one gets recent Bills from the 118th Congress.
 //! let endpoint = bill::Congress::builder().congress(118_u8).build().unwrap();
