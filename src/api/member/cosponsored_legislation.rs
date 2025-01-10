@@ -30,7 +30,7 @@ impl Endpoint for CosponsoredLegislation<'_> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("member/{}/sponsored-legislation", self.bioguide_id).into()
+        format!("member/{}/cosponsored-legislation", self.bioguide_id).into()
     }
 
     fn parameters(&self) -> QueryParams {
