@@ -2,11 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::api::{
-    common::BillType,
-    endpoint::Endpoint,
-    params::QueryParams,
-};
+use crate::api::{common::BillType, endpoint::Endpoint, params::QueryParams};
 
 /// Represents the /bill/:congress/:billtype/:billnumber/actions endpoint.
 #[derive(Debug, Clone, Copy, Builder)]

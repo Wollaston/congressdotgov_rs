@@ -2,11 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{
-    api::endpoint::Endpoint,
-    api::params::QueryParams,
-    api::law::CongressionalLawType,
-};
+use crate::{api::endpoint::Endpoint, api::law::CongressionalLawType, api::params::QueryParams};
 
 /// Represents the /law/:congress/:lawType endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -49,7 +45,7 @@ impl Endpoint for LawType {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::common::Format, api::query::Query, auth::Auth, Cdg};
+    use crate::{Cdg, api::common::Format, api::query::Query, auth::Auth};
 
     use super::*;
 

@@ -3,9 +3,7 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    api::endpoint::Endpoint,
-    api::params::QueryParams,
-    api::member::CongressionalStateCode,
+    api::endpoint::Endpoint, api::member::CongressionalStateCode, api::params::QueryParams,
 };
 
 /// Represents the /member/congress/:congress/:stateCode/:district endpoint.

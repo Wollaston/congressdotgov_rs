@@ -5,7 +5,7 @@ use url::Url;
 
 use crate::{api::client::Client, api::error::ApiError, api::params::QueryParams};
 
-use super::{query, Query};
+use super::{Query, query};
 
 /// The URL base for the congress.gov REST API.
 /// Currently, there is only one variant for the current
@@ -66,10 +66,11 @@ where
 
         let status = rsp.status();
 
-        let val = if let Ok(val) = serde_json::from_slice(rsp.body()) {
-            val
-        } else {
-            return Err(ApiError::Http { status });
+        let val = match serde_json::from_slice(rsp.body()) {
+            Ok(val) => val,
+            _ => {
+                return Err(ApiError::Http { status });
+            }
         };
 
         if !status.is_success() {

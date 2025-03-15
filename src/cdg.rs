@@ -1,11 +1,11 @@
 use bytes::Bytes;
-use http::{header::InvalidHeaderValue, Response};
+use http::{Response, header::InvalidHeaderValue};
 use reqwest::{Client, Request};
 use thiserror::Error;
 use url::Url;
 
 use crate::{
-    api::{common::Format, ApiError},
+    api::{ApiError, common::Format},
     auth::Auth,
 };
 

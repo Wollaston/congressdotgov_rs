@@ -3,11 +3,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{
-    api::common::Sort,
-    api::endpoint::Endpoint,
-    api::params::QueryParams,
-};
+use crate::{api::common::Sort, api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /bill endpoint.
 #[derive(Debug, Clone, Copy, Builder)]

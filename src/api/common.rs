@@ -1,6 +1,6 @@
 //! API types common to many endpoints.
 
-use http::{header::InvalidHeaderValue, HeaderValue};
+use http::{HeaderValue, header::InvalidHeaderValue};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 

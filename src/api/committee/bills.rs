@@ -3,9 +3,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::api::{
-    committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams,
-};
+use crate::api::{committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
 
 /// Represents the /committee/:chamber/:committeeCode/bills endpoint.
 #[derive(Debug, Clone, Builder)]

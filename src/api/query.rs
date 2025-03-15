@@ -14,5 +14,5 @@ where
 {
     /// Perform the query against the client.
     fn query(&self, client: &C)
-        -> impl std::future::Future<Output = Result<T, ApiError<C::Error>>>;
+    -> impl std::future::Future<Output = Result<T, ApiError<C::Error>>>;
 }
