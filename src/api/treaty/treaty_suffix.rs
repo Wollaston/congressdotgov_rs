@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
+use crate::{api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /treaty/:congress/:treatyNumber/:treatySuffix endpoint.
 #[derive(Debug, Clone, Builder)]
@@ -14,8 +14,6 @@ pub struct TreatySuffix<'a> {
     treaty_number: u32,
     #[builder(setter(into))]
     treaty_suffix: Cow<'a, str>,
-    #[builder(default)]
-    format: Format,
 }
 
 impl<'a> TreatySuffix<'a> {
@@ -38,17 +36,17 @@ impl Endpoint for TreatySuffix<'_> {
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params.push("format", self.format);
-
-        params
+        QueryParams::default()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
+    use crate::{
+        api::{common::Format, query::Query},
+        auth::Auth,
+        cdg::Cdg,
+    };
 
     use super::*;
 
@@ -68,7 +66,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = TreatySuffix::builder()
             .congress(114_u8)

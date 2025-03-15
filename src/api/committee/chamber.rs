@@ -3,9 +3,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::api::{
-    committee::CommitteeChamber, common::Format, endpoint::Endpoint, params::QueryParams,
-};
+use crate::api::{committee::CommitteeChamber, endpoint::Endpoint, params::QueryParams};
 
 /// Represents the /committee/:congress/:chamber endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -15,8 +13,6 @@ pub struct Chamber {
     congress: u16,
     #[builder(setter(into))]
     chamber: CommitteeChamber,
-    #[builder(default)]
-    format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
@@ -45,7 +41,6 @@ impl Endpoint for Chamber {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
-        params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
         params.push_opt("from_date_time", self.from_date_time);
@@ -57,7 +52,11 @@ impl Endpoint for Chamber {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::committee::CommitteeChamber, api::query::Query, auth::Auth, cdg::Cdg};
+    use crate::{
+        api::{committee::CommitteeChamber, common::Format, query::Query},
+        auth::Auth,
+        cdg::Cdg,
+    };
 
     use super::*;
 
@@ -76,7 +75,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = Chamber::builder()
             .congress(118_u16)

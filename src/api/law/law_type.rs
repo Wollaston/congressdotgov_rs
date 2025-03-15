@@ -5,7 +5,7 @@ use std::borrow::Cow;
 use crate::{
     api::endpoint::Endpoint,
     api::params::QueryParams,
-    api::{common::Format, law::CongressionalLawType},
+    api::law::CongressionalLawType,
 };
 
 /// Represents the /law/:congress/:lawType endpoint.
@@ -16,8 +16,6 @@ pub struct LawType {
     congress: u16,
     #[builder(default)]
     law_type: CongressionalLawType,
-    #[builder(default)]
-    format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
@@ -42,7 +40,6 @@ impl Endpoint for LawType {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
-        params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
 
@@ -52,7 +49,7 @@ impl Endpoint for LawType {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::query::Query, auth::Auth, Cdg};
+    use crate::{api::common::Format, api::query::Query, auth::Auth, Cdg};
 
     use super::*;
 
@@ -71,7 +68,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = LawType::builder()
             .congress(118_u16)

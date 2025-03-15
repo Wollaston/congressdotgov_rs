@@ -13,6 +13,7 @@
 //! use congressdotgov_rs::Cdg;
 //! use congressdotgov_rs::api::Query;
 //! use congressdotgov_rs::api::bill;
+//! use congressdotgov_rs::api::common::Format;
 //! use congressdotgov_rs::Auth;
 //! use tokio_test::block_on;
 //!
@@ -20,21 +21,27 @@
 //! // define your structure to only deserialize what is needed as the return value is a
 //! // serde_json::Value.
 //! #[derive(Debug, Deserialize)]
-//! struct Bill {
+//! struct Bills {
+//!     bills: Vec<Bill>,
+//! }
+//!
+//! #[derive(Debug, Deserialize)]
+//! struct Bill{
 //!     title: String,
+//!     number: String,
 //! }
 //!
 //! // Create the client.
 //! let auth = Auth::Token("API_KEY".into());
 //! let req_client = reqwest::Client::new();
-//! let client = Cdg::new(auth, req_client).unwrap();
+//! let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 //!
 //! // Create a simple endpoint. This one gets recent Bills from the 118th Congress.
 //! let endpoint = bill::Congress::builder().congress(118_u8).build().unwrap();
 //!
 //! // Call the endpoint. The return type decides how to represent the value.
 //! # tokio_test::block_on(async {
-//! let bills: Vec<Bill> = endpoint.query(&client).await.unwrap();
+//!     let bills: Bills = endpoint.query(&client).await.unwrap();
 //! # })
 //! ```
 
@@ -70,7 +77,6 @@ pub use self::client::Client;
 
 pub use self::endpoint::Endpoint;
 pub use self::endpoint::UrlBase;
-
 pub use self::error::ApiError;
 
 pub use self::params::ParamValue;

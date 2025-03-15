@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
+use crate::{api::endpoint::Endpoint, api::params::QueryParams};
 
 use super::CongressionalStateCode;
 
@@ -14,8 +14,6 @@ pub struct StateCodeDistrict {
     state_code: CongressionalStateCode,
     #[builder(setter(into))]
     district: u16,
-    #[builder(default)]
-    format: Format,
     #[builder(default)]
     current_member: Option<bool>,
 }
@@ -38,7 +36,6 @@ impl Endpoint for StateCodeDistrict {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
-        params.push("format", self.format);
         params.push_opt("current_member", self.current_member);
 
         params
@@ -47,7 +44,7 @@ impl Endpoint for StateCodeDistrict {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
+    use crate::{api::common::Format, api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 
@@ -66,7 +63,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = StateCodeDistrict::builder()
             .state_code(crate::api::member::CongressionalStateCode::VA)

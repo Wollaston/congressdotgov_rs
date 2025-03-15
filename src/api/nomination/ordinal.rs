@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
+use crate::{api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /nomination/:congress/:nominationNumber/:ordinal endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -14,8 +14,6 @@ pub struct Ordinal {
     nomination_number: u32,
     #[builder(setter(into))]
     ordinal: u32,
-    #[builder(default)]
-    format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
@@ -44,7 +42,6 @@ impl Endpoint for Ordinal {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
-        params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
 
@@ -54,7 +51,11 @@ impl Endpoint for Ordinal {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
+    use crate::{
+        api::{common::Format, query::Query},
+        auth::Auth,
+        cdg::Cdg,
+    };
 
     use super::*;
 
@@ -101,7 +102,6 @@ mod tests {
     #[test]
     fn test_ordinal_format_builder() {
         Ordinal::builder()
-            .format(Format::Xml)
             .congress(117_u8)
             .nomination_number(2467_u32)
             .ordinal(1_u32)
@@ -149,7 +149,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = Ordinal::builder()
             .congress(117_u8)
@@ -167,7 +167,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = Ordinal::builder()
             .congress(117_u8)
@@ -186,7 +186,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = Ordinal::builder()
             .congress(117_u8)
@@ -205,7 +205,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = Ordinal::builder()
             .congress(117_u8)

@@ -3,7 +3,7 @@ use http::Method;
 use std::borrow::Cow;
 
 use crate::{
-    api::common::{CommitteeChamber, Format},
+    api::common::CommitteeChamber,
     api::endpoint::Endpoint,
     api::params::QueryParams,
 };
@@ -18,8 +18,6 @@ pub struct Text {
     chamber: CommitteeChamber,
     #[builder(setter(into))]
     jacket_number: u32,
-    #[builder(default)]
-    format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
@@ -50,7 +48,6 @@ impl Endpoint for Text {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
-        params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
 
@@ -60,7 +57,7 @@ impl Endpoint for Text {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
+    use crate::{api::common::Format, api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 
@@ -80,7 +77,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = Text::builder()
             .congress(117_u16)

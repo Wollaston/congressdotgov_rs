@@ -1,5 +1,6 @@
 //! API types common to many endpoints.
 
+use http::{header::InvalidHeaderValue, HeaderValue};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
@@ -93,6 +94,13 @@ impl Format {
         match self {
             Format::Json => "json",
             Format::Xml => "xml",
+        }
+    }
+
+    pub fn as_header(self) -> Result<HeaderValue, InvalidHeaderValue> {
+        match self {
+            Format::Json => HeaderValue::from_str("application/json"),
+            Format::Xml => HeaderValue::from_str("application/xml"),
         }
     }
 }

@@ -1,10 +1,13 @@
 use bytes::Bytes;
-use http::{HeaderValue, Response};
+use http::{header::InvalidHeaderValue, Response};
 use reqwest::{Client, Request};
 use thiserror::Error;
 use url::Url;
 
-use crate::{api::ApiError, auth::Auth};
+use crate::{
+    api::{common::Format, ApiError},
+    auth::Auth,
+};
 
 /// Various error types that can occur when using the Cdg struct
 /// and its values.
@@ -37,6 +40,11 @@ pub enum CdgError {
         #[from]
         source: serde_json::Error,
     },
+    #[error("could not parse header value: {}", source)]
+    Header {
+        #[from]
+        source: InvalidHeaderValue,
+    },
 }
 
 /// The primary struct used when consuming Endpoints. Holds
@@ -49,15 +57,18 @@ pub struct Cdg {
     pub base_url: Url,
     /// The authentication information to use when making API calls.
     pub auth: Auth,
+    /// The desired response format. Can be XML or JSON.
+    pub format: Format,
 }
 
 impl Cdg {
     /// Creates a new Cdg struct with the provided Auth.
-    pub fn new(auth: Auth, client: reqwest::Client) -> Result<Cdg, CdgError> {
+    pub fn new(auth: Auth, client: reqwest::Client, format: Format) -> Result<Cdg, CdgError> {
         Ok(Cdg {
             client,
             base_url: Url::parse("https://api.congress.gov/v3/")?,
             auth,
+            format,
         })
     }
 }
@@ -95,10 +106,7 @@ impl crate::api::Client for Cdg {
                 .status(rsp.status())
                 .version(rsp.version());
             let headers = http_rsp.headers_mut().unwrap();
-            headers.insert(
-                http::header::CONTENT_TYPE,
-                HeaderValue::from_str("application/json").unwrap(),
-            );
+            headers.insert(http::header::ACCEPT, self.format.as_header()?);
             for (key, value) in rsp.headers() {
                 headers.insert(key, value.clone());
             }

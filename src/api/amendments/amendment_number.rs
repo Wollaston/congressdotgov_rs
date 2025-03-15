@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
+use crate::{api::endpoint::Endpoint, api::params::QueryParams};
 
 use super::CongressionalAmendmentType;
 
@@ -16,8 +16,6 @@ pub struct AmendmentNumber {
     amendment_type: CongressionalAmendmentType,
     #[builder(setter(into))]
     amendment_number: u32,
-    #[builder(default)]
-    format: Format,
 }
 
 impl AmendmentNumber {
@@ -42,18 +40,18 @@ impl Endpoint for AmendmentNumber {
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params.push("format", self.format);
-
-        params
+        QueryParams::default()
     }
 }
 
 #[cfg(test)]
 mod tests {
 
-    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
+    use crate::{
+        api::{common::Format, query::Query},
+        auth::Auth,
+        cdg::Cdg,
+    };
 
     use super::*;
 
@@ -73,7 +71,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = AmendmentNumber::builder()
             .congress(117_u8)

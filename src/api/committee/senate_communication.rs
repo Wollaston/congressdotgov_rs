@@ -5,7 +5,7 @@ use std::borrow::Cow;
 use crate::{
     api::endpoint::Endpoint,
     api::params::QueryParams,
-    api::{committee::CommitteeChamber, common::Format},
+    api::committee::CommitteeChamber,
 };
 
 /// Represents the /committee/:chamber/:committeeCode/senate-communication endpoint.
@@ -16,8 +16,6 @@ pub struct SenateCommunication<'a> {
     chamber: CommitteeChamber,
     #[builder(setter(into))]
     committee_code: Cow<'a, str>,
-    #[builder(default)]
-    format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
@@ -47,7 +45,6 @@ impl Endpoint for SenateCommunication<'_> {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
-        params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
 
@@ -57,7 +54,7 @@ impl Endpoint for SenateCommunication<'_> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{api::query::Query, auth::Auth, cdg::Cdg};
+    use crate::{api::common::Format, api::query::Query, auth::Auth, cdg::Cdg};
 
     use super::*;
 
@@ -76,7 +73,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = SenateCommunication::builder()
             .chamber(CommitteeChamber::Senate)

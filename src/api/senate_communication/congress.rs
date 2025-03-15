@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use http::Method;
 use std::borrow::Cow;
 
-use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryParams};
+use crate::{api::endpoint::Endpoint, api::params::QueryParams};
 
 /// Represents the /senate-communication/:congress endpoint.
 #[derive(Debug, Clone, Copy, Builder)]
@@ -10,8 +10,6 @@ use crate::{api::common::Format, api::endpoint::Endpoint, api::params::QueryPara
 pub struct Congress {
     #[builder(default)]
     congress: u8,
-    #[builder(default)]
-    format: Format,
     #[builder(default)]
     offset: Option<u32>,
     #[builder(default)]
@@ -36,7 +34,6 @@ impl Endpoint for Congress {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
 
-        params.push("format", self.format);
         params.push_opt("offset", self.offset);
         params.push_opt("limit", self.limit);
 
@@ -47,7 +44,9 @@ impl Endpoint for Congress {
 #[cfg(test)]
 mod tests {
     use crate::{
-        api::query::Query, api::senate_communication::congress::Congress, auth::Auth, cdg::Cdg,
+        api::{common::Format, query::Query, senate_communication::congress::Congress},
+        auth::Auth,
+        cdg::Cdg,
     };
 
     #[test]
@@ -61,7 +60,7 @@ mod tests {
 
         let auth = Auth::Token(dotenvy::var("CDG_API_KEY").unwrap());
         let req_client = reqwest::Client::new();
-        let client = Cdg::new(auth, req_client).unwrap();
+        let client = Cdg::new(auth, req_client, Format::Json).unwrap();
 
         let endpoint = Congress::builder().congress(117_u8).build().unwrap();
 
