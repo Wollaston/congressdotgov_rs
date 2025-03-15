@@ -6,57 +6,67 @@ These are unofficial bindings and are not affiliated with congress.gov
 
 ## Example
 
-```rust,no_run                                                                             
-use serde::Deserialize;                                                                    
-use congressdotgov_rs::Cdg;                                                                
-use congressdotgov_rs::api::Query;                                                         
-use congressdotgov_rs::api::bill;                                                          
-use congressdotgov_rs::Auth;                                                               
-use tokio_test::block_on;                                                                  
-                                                                                           
-// The return type of a `Bill`. Note that a Bill may contain more information, but you can 
-// define your structure to only deserialize what is needed as the return value is a       
-// serde_json::Value.                                                                      
-#[derive(Debug, Deserialize)]                                                              
-struct Bill {                                                                              
-    title: String,                                                                         
-}                                                                                          
-                                                                                           
-// Create the client.                                                                      
-let auth = Auth::Token("API_KEY".into());                                                  
-let client = Cdg::new(auth).unwrap();                                                      
-                                                                                           
-// Create a simple endpoint. This one gets recent Bills from the 118th Congress.           
-let endpoint = bill::Congress::builder().congress(118_u8).build().unwrap();                
-                                                                                           
-// Call the endpoint. The return type decides how to represent the value.                  
-# tokio_test::block_on(async {                                                             
-  let bills: Vec<Bill> = endpoint.query(&client).await.unwrap();                             
+```rust,no_run
+use serde::Deserialize;
+use congressdotgov_rs::Cdg;
+use congressdotgov_rs::api::Query;
+use congressdotgov_rs::api::bill;
+use congressdotgov_rs::api::common::Format;
+use congressdotgov_rs::Auth;
+use tokio_test::block_on;
+
+// The return type of a `Bill`. Note that a Bill may contain more information, but you can
+// define your structure to only deserialize what is needed as the return value is a
+// serde_json::Value.
+#[derive(Debug, Deserialize)]
+struct Bills {
+    bills: Vec<Bill>,
+}
+
+#[derive(Debug, Deserialize)]
+struct Bill{
+    title: String,
+    number: String,
+}
+
+// Create the client.
+let auth = Auth::Token("API_KEY".into());
+let req_client = reqwest::Client::new();
+let client = Cdg::new(auth, req_client, Format::Json).unwrap();
+
+// Create a simple endpoint. This one gets recent Bills from the 118th Congress.
+let endpoint = bill::Congress::builder().congress(118_u8).build().unwrap();
+
+// Call the endpoint. The return type decides how to represent the value.
+# tokio_test::block_on(async {
+    let bills: Bills = endpoint.query(&client).await.unwrap();
 # })
 ```
+
 ## Coverage
 
-All resources, endpoints, and their respective query parameters are covered by these bindings. Many parameters are defined by Rust types, and the library strives to be idiomatic. 
+All resources, endpoints, and their respective query parameters are covered by these bindings. Many parameters are defined by Rust types, and the library strives to be idiomatic.
 
 These resources are:
-  -  bill
-  -  amendments
-  -  summaries
-  -  congress
-  -  member
-  -  committee
-  -  committee-report
-  -  committee-print
-  -  committee-meeting
-  -  hearing
-  -  congressional-record
-  -  daily-congressional-record
-  -  bound-congressional-record
-  -  house-communication
-  -  house-requirement
-  -  senate-communication
-  -  nomination
-  -  treaty
+
+- bill
+- amendments
+- summaries
+- congress
+- member
+- committee
+- committee-report
+- committee-print
+- committee-meeting
+- hearing
+- congressional-record
+- daily-congressional-record
+- bound-congressional-record
+- house-communication
+- house-requirement
+- senate-communication
+- nomination
+- treaty
 
 ### Motivation
 
