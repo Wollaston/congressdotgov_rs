@@ -66,6 +66,7 @@ These resources are:
 - house-requirement
 - senate-communication
 - nomination
+- crsreport
 - treaty
 
 ### Motivation
