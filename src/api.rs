@@ -62,6 +62,7 @@ pub mod committee_print;
 pub mod committee_report;
 pub mod congress;
 pub mod congressional_record;
+pub mod crsreport;
 pub mod daily_congressional_record;
 pub mod hearing;
 pub mod house_communication;
